@@ -1,8 +1,0 @@
-- fix: 缺陷修复
-- docs: 文档更新
-- test: 单元测试
-- style: 代码风格更新
-- perf: 性能优化
-- feat: 新特性或功能
-- refactor: 代码重构，不引入新功能和缺陷修复
-- chore: 杂务
