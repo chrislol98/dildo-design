@@ -8,8 +8,8 @@ const Demo = () => {
         console.log(value, store);
       }}
     >
-      <Form.Item>
-       <input/>
+      <Form.Item field={'name'}>
+        <input />
       </Form.Item>
     </Form>
   );

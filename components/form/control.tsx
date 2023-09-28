@@ -1,42 +1,50 @@
 import React, { Component } from 'react';
+import { isSyntheticEvent } from '../_util/is';
+import { FormItemContext } from './context';
 
 export default class Control extends Component<any> {
   static defaultProps = {
     trigger: 'onChange',
     triggerPropName: 'value',
   };
-  context: any;
+
+  static contextType = FormItemContext;
+  context: React.ContextType<typeof FormItemContext>;
+
+  child: any;
 
   constructor(props) {
     super(props);
   }
 
-  handleTrigger = (value, ...args) => {
+  handleTrigger = (_value, ...args) => {
     const { field } = this.props;
-    this.innerSetFieldValue(field, value);
+    if (isSyntheticEvent(_value)) {
+      _value = _value.nativeEvent.data;
+    }
+    this.innerSetFieldValue(field, _value);
   };
 
-  innerSetFieldValue(field, value) {
+  innerSetFieldValue = (field, value) => {
+    if (!field) return;
     const { store } = this.context;
     const methods = store.getInnerMethods(true);
-
     methods.innerSetFieldValue(field, value);
-  }
+  };
 
-  // render
-  renderControl(children) {
+  renderControl(children, field) {
     const { trigger } = this.props;
     const child = React.Children.only(children);
-    const childProps: Record<PropertyKey, any> = {
+    const childProps = {
       [trigger]: this.handleTrigger,
+      id: field,
     };
-
     return React.cloneElement(child, childProps);
   }
 
   render() {
-    let child = this.renderControl(this.props.children);
-    // 不懂 不能写成 <child />
-    return <div>{child}</div>;
+    const { children, noStyle, field, isFormList, hasFeedback } = this.props;
+    let child = this.renderControl(children, field);
+    return child;
   }
 }

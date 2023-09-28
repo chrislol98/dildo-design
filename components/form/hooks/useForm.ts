@@ -8,7 +8,7 @@ function gtFormInstance() {
     getInnerMethods: (inner) => {
       const methods = {};
       if (inner) {
-        ['innerSetInitialValues'].map((key) => {
+        ['innerSetInitialValues', 'innerSetFieldValue', 'innerSetCallbacks'].map((key) => {
           methods[key] = store[key];
         });
       }

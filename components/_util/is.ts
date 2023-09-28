@@ -90,3 +90,9 @@ export function isDayjs(time): time is Dayjs {
 export function isBoolean(value: any): value is Boolean {
   return typeof value === 'boolean';
 }
+
+
+// 判断是否是个事件对象 e?.constructor?.name 可能不是 SyntheticEvent，跟业务项目的打包方式有关系
+export function isSyntheticEvent(e: any): boolean {
+  return e?.constructor?.name === 'SyntheticEvent' || e?.nativeEvent instanceof Event;
+}

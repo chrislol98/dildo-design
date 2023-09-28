@@ -1,4 +1,6 @@
+import { PropertyPath } from 'lodash';
 import cloneDeepWith from 'lodash/cloneDeepWith';
+import lodashSet from 'lodash/set';
 import { isArray, isObject } from './is';
 
 export function cloneDeep(value) {
@@ -8,4 +10,14 @@ export function cloneDeep(value) {
       return val;
     }
   });
+}
+
+export function set<T extends Record<PropertyKey, any>>(
+  target: T,
+  // 不懂 PropertyPath是什么
+  field: PropertyPath,
+  value: any
+) {
+  lodashSet(target, field, cloneDeep(value));
+  return target;
 }

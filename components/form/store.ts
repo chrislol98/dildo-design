@@ -1,14 +1,19 @@
-import { cloneDeep } from '../_util/lodash';
-
+import { cloneDeep, set } from '../_util/lodash';
 class Store {
   // store
-  private callbacks: any = {};
   private store = {};
+
+  private callbacks: Record<string, any> = {};
 
   // setValue
   public innerSetFieldValue = (field, value) => {
     if (!field) return;
+    set(this.store, field, value);
     this.triggerTouchChange({ [field]: value } as unknown as Partial<FormData>);
+  };
+
+  public innerSetCallbacks = (values) => {
+    this.callbacks = values;
   };
 
   // getValue
@@ -17,10 +22,10 @@ class Store {
   };
 
   // dispatch
-  private triggerTouchChange(value) {
+  private triggerTouchChange(value: Partial<FormData>) {
     if (value && Object.keys(value).length) {
       const { onChange } = this.callbacks;
-      onChange?.(value, this.getFields());
+      onChange && onChange(value, this.getFields());
     }
   }
 }
