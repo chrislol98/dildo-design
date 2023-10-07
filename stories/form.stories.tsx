@@ -5,6 +5,9 @@ const Demo = () => {
   return (
     <Form
       onChange={(value, store) => {
+        // console.log(value, store);
+      }}
+      onValuesChange={(value, store) => {
         console.log(value, store);
       }}
     >

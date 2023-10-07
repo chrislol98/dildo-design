@@ -3,7 +3,7 @@ import { FormContext } from './context';
 import useForm from './hooks/useForm';
 const Form = (props, ref) => {
   const [formInstance] = useForm(props.form);
-  const innerMethods = formInstance.getInnerMethods(true) as any;
+  const innerMethods = formInstance.getInnerMethods(true);
 
   // api useMount hook
   useMount(() => {
@@ -12,6 +12,9 @@ const Form = (props, ref) => {
 
   innerMethods.innerSetCallbacks({
     onChange: props.onChange,
+    onValuesChange: (value, values) => {
+      props.onValuesChange?.(value, values);
+    },
   });
 
   const formContextValue = {

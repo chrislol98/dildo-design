@@ -20,7 +20,8 @@ export default class Control extends Component<any> {
   handleTrigger = (_value, ...args) => {
     const { field } = this.props;
     if (isSyntheticEvent(_value)) {
-      _value = _value.nativeEvent.data;
+      // console.log(_value, 'sfdfs')
+      _value = _value.nativeEvent.target.value;
     }
     this.innerSetFieldValue(field, _value);
   };
