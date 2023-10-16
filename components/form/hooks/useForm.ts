@@ -6,6 +6,7 @@ import Store from '../store';
 function gtFormInstance<FormData>(): FormInstance<FormData> {
   const store = new Store<FormData>();
   return {
+    submit: store.submit,
     getFields: store.getFields,
     getInnerMethods: (inner: boolean) => {
       const methods = {} as InnerMethodsReturnType<FormData>;

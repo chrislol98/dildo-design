@@ -6,7 +6,7 @@ class Store<StoreData> {
 
   private callbacks: Record<string, any> = {};
 
-  // setValue
+ 
   public innerSetFieldValue = (field, value) => {
     if (!field) return;
     set(this.store, field, value);
@@ -18,12 +18,12 @@ class Store<StoreData> {
     this.callbacks = values;
   };
 
-  // getValue
+ 
   public getFields = () => {
     return cloneDeep(this.store);
   };
 
-  // dispatch
+  
   private triggerTouchChange(value) {
     if (value && Object.keys(value).length) {
       const { onChange } = this.callbacks;
@@ -35,6 +35,12 @@ class Store<StoreData> {
       const { onValuesChange } = this.callbacks;
       onValuesChange && onValuesChange(value, this.getFields());
     }
+  }
+
+
+  public submit = () => {
+    const { onSubmit } = this.callbacks;
+    onSubmit && onSubmit(this.getFields());
   }
 }
 

@@ -10,10 +10,14 @@ const Demo = () => {
       onValuesChange={(value, store) => {
         console.log(value, store);
       }}
+      onSubmit={v=> {
+        console.log(v)
+      }}
     >
       <Form.Item field={'name'}>
         <input />
       </Form.Item>
+      <button type="submit"></button>
     </Form>
   );
 };
