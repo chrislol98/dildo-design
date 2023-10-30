@@ -13,14 +13,42 @@ export default class Control extends Component<any> {
 
   child: any;
 
+  private removeRegisterField: () => void;
+
   constructor(props) {
     super(props);
   }
 
+  componentDidMount(): void {
+    const { store } = this.context;
+    if (store) {
+      const innerMethods = store.getInnerMethods(true);
+      this.removeRegisterField = innerMethods.registerField(this);
+    }
+  }
+
+  componentWillUnmount() {
+    this.removeRegisterField && this.removeRegisterField();
+    this.removeRegisterField = null;
+
+  }
+  validateField = (
+
+  ): Promise<{
+    error,
+    value;
+    field
+  }> => {
+
+    const { field, rules, validateTrigger } = this.props;
+    const value = this.getFieldValue();
+
+   
+    return Promise.resolve({ error: null, value, field });
+  };
   handleTrigger = (_value, ...args) => {
     const { field } = this.props;
     if (isSyntheticEvent(_value)) {
-      // console.log(_value, 'sfdfs')
       _value = _value.nativeEvent.target.value;
     }
     this.innerSetFieldValue(field, _value);
@@ -44,8 +72,9 @@ export default class Control extends Component<any> {
   }
 
   render() {
-    const { children, noStyle, field, isFormList, hasFeedback } = this.props;
+    const { children, field } = this.props;
     let child = this.renderControl(children, field);
     return child;
   }
 }
+  

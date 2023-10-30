@@ -8,6 +8,7 @@ function gtFormInstance<FormData>(): FormInstance<FormData> {
   return {
     submit: store.submit,
     getFields: store.getFields,
+    registerField: store.registerField,
     getInnerMethods: (inner: boolean) => {
       const methods = {} as InnerMethodsReturnType<FormData>;
       if (inner) {
