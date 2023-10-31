@@ -10,14 +10,28 @@ const Demo = () => {
       onValuesChange={(value, store) => {
         console.log(value, store);
       }}
-      onSubmit={v=> {
+      onSubmit={v => {
         console.log(v)
       }}
     >
-      <Form.Item field={'name'}>
+      <Form.Item field={'name'} rules={[
+        {
+          validateTrigger: 'onChange',
+          required: true,
+          // validateLevel: 'error',
+          // validator: (value, callback) => {
+
+          //   console.log(value, 'value')
+          //   if (!value) {
+          //     callback('空的')
+          //   }
+          //   callback('自定义校验');
+          // },
+        },
+      ]}>
         <input />
       </Form.Item>
-      <button type="submit"></button>
+      <button type="submit">1111</button>
     </Form>
   );
 };

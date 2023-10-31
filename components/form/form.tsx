@@ -1,7 +1,7 @@
 import { useMount } from 'ahooks';
 import { FormContext } from './context';
 import useForm from './hooks/useForm';
-import useMergeProps from 'components/_util/hooks';
+import useMergeProps from '../../components/_util/hooks';
 
 const defaultProps = {
   Wrapper: 'form',

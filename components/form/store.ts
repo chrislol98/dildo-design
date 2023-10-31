@@ -1,5 +1,7 @@
+import get from 'lodash/get';
 import { cloneDeep, set } from '../_util/lodash';
-import promisify from '../_util/promisify'
+import promisify from '../_util/promisify';
+
 class Store<StoreData> {
   // store
   // 不懂 报错 private store: StoreData = {};
@@ -11,6 +13,7 @@ class Store<StoreData> {
 
   public innerSetFieldValue = (field, value) => {
     if (!field) return;
+    console.log(field, value, 'field');
     set(this.store, field, value);
     this.triggerTouchChange({ [field]: value });
     this.triggerValuesChange({ [field]: value });
@@ -20,28 +23,23 @@ class Store<StoreData> {
     this.callbacks = values;
   };
 
-
   public getFields = () => {
     return cloneDeep(this.store);
   };
 
-
-
   public registerField = (item) => {
     this.registerFields.push(item);
-   
 
     return () => {
       this.registerFields = this.registerFields.filter((x) => x !== item);
-      
     };
   };
 
+  public innerGetFieldValue = (field) => {
+    return get(this.store, field);
+  };
 
-  private getRegisteredFields = (
-    hasField?: boolean,
-    options?: { containFormList?: boolean }
-  ) => {
+  private getRegisteredFields = (hasField?: boolean, options?: { containFormList?: boolean }) => {
     if (hasField) {
       return this.registerFields.filter(
         (control) =>
@@ -54,7 +52,6 @@ class Store<StoreData> {
   public getRegisteredField = (field) => {
     return this.registerFields.filter((x) => x.props.field === field)[0];
   };
-
 
   private triggerTouchChange(value) {
     if (value && Object.keys(value).length) {
@@ -69,11 +66,8 @@ class Store<StoreData> {
     }
   }
 
-
   public validate = promisify((fieldsOrCallback, callback) => {
-    let controlItems = this.getRegisteredFields(true, {
-
-    });
+    let controlItems = this.getRegisteredFields(true, {});
     const promises = controlItems.map((x) => x.validateField());
     Promise.all(promises).then((result) => {
       let errors = {};
@@ -93,15 +87,12 @@ class Store<StoreData> {
         callback && callback(null, cloneDeep(values));
       }
     });
-
-  })
+  });
 
   public submit = () => {
     const { onSubmit } = this.callbacks;
     onSubmit && onSubmit(this.getFields());
-  }
+  };
 }
 
 export default Store;
-
-
