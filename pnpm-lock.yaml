@@ -8,6 +8,9 @@ dependencies:
   ahooks:
     specifier: ^3.7.8
     version: registry.npmmirror.com/ahooks@3.7.8(react@18.2.0)
+  b-validate:
+    specifier: ^1.5.3
+    version: registry.npmmirror.com/b-validate@1.5.3
   dayjs:
     specifier: ^1.11.10
     version: registry.npmmirror.com/dayjs@1.11.10
@@ -16,15 +19,9 @@ dependencies:
     version: registry.npmmirror.com/lodash@4.17.21
 
 devDependencies:
-  '@babel/plugin-syntax-flow':
-    specifier: ^7.22.5
-    version: registry.npmmirror.com/@babel/plugin-syntax-flow@7.22.5(@babel/core@7.23.0)
   '@babel/preset-env':
     specifier: ^7.22.20
     version: registry.npmmirror.com/@babel/preset-env@7.22.20(@babel/core@7.23.0)
-  '@babel/preset-flow':
-    specifier: ^7.22.15
-    version: registry.npmmirror.com/@babel/preset-flow@7.22.15(@babel/core@7.23.0)
   '@babel/preset-react':
     specifier: ^7.22.15
     version: registry.npmmirror.com/@babel/preset-react@7.22.15(@babel/core@7.23.0)
@@ -55,9 +52,6 @@ devDependencies:
   '@storybook/testing-library':
     specifier: ^0.2.1
     version: registry.npmmirror.com/@storybook/testing-library@0.2.2
-  '@tanstack/react-table':
-    specifier: ^8.10.4
-    version: registry.npmmirror.com/@tanstack/react-table@8.10.4(react-dom@18.2.0)(react@18.2.0)
   '@types/react':
     specifier: ^18.2.23
     version: registry.npmmirror.com/@types/react@18.2.25
@@ -4356,28 +4350,6 @@ packages:
     version: 0.1.5
     dev: true
 
-  registry.npmmirror.com/@tanstack/react-table@8.10.4(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-t3VE77XotxEw1DdRc+b1f7wrD6Dr17CPcl9FVby4HFmfrC5zUIPhzAxPBYcm2WgS2g09n/hnITIQ5zh2zzu1hg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@tanstack/react-table/-/react-table-8.10.4.tgz}
-    id: registry.npmmirror.com/@tanstack/react-table/8.10.4
-    name: '@tanstack/react-table'
-    version: 8.10.4
-    engines: {node: '>=12'}
-    peerDependencies:
-      react: '>=16'
-      react-dom: '>=16'
-    dependencies:
-      '@tanstack/table-core': registry.npmmirror.com/@tanstack/table-core@8.10.4
-      react: registry.npmmirror.com/react@18.2.0
-      react-dom: registry.npmmirror.com/react-dom@18.2.0(react@18.2.0)
-    dev: true
-
-  registry.npmmirror.com/@tanstack/table-core@8.10.4:
-    resolution: {integrity: sha512-1eJu8hY8U+bM/dkn+ldr/KtDqjcj3Wmn8u3n6rZsrb/wd88k8qmGTFcc+BA/fojGTqCRX1gKc8zMzuk2nauBEA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@tanstack/table-core/-/table-core-8.10.4.tgz}
-    name: '@tanstack/table-core'
-    version: 8.10.4
-    engines: {node: '>=12'}
-    dev: true
-
   registry.npmmirror.com/@testing-library/dom@9.3.3:
     resolution: {integrity: sha512-fB0R+fa3AUqbLHWyxXa2kGVtf1Fe1ZZFr0Zp6AIbIAzXb2mKbEXl+PCQNUOaq5lbTab5tfctfXRNsWXxa2f7Aw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@testing-library/dom/-/dom-9.3.3.tgz}
     name: '@testing-library/dom'
@@ -5318,6 +5290,12 @@ packages:
     version: 1.0.5
     engines: {node: '>= 0.4'}
     dev: true
+
+  registry.npmmirror.com/b-validate@1.5.3:
+    resolution: {integrity: sha512-iCvCkGFskbaYtfQ0a3GmcQCHl/Sv1GufXFGuUQ+FE+WJa7A/espLOuFIn09B944V8/ImPj71T4+rTASxO2PAuA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/b-validate/-/b-validate-1.5.3.tgz}
+    name: b-validate
+    version: 1.5.3
+    dev: false
 
   registry.npmmirror.com/babel-core@7.0.0-bridge.0(@babel/core@7.23.0):
     resolution: {integrity: sha512-poPX9mZH/5CSanm50Q+1toVci6pv5KSRv/5TWCwtzQS5XEwn40BcCrgIeMFWP9CKKIniKXNxoIOnOq4VVlGXhg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/babel-core/-/babel-core-7.0.0-bridge.0.tgz}
