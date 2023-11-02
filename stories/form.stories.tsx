@@ -18,15 +18,15 @@ const Demo = () => {
         {
           validateTrigger: 'onChange',
           required: true,
-          // validateLevel: 'error',
-          // validator: (value, callback) => {
+          validator: async (value, callback) => {
+            return new Promise((resolve) => {
+              setTimeout(() => {
 
-          //   console.log(value, 'value')
-          //   if (!value) {
-          //     callback('空的')
-          //   }
-          //   callback('自定义校验');
-          // },
+                callback('校验');
+                resolve('');
+              }, 5000);
+            });
+          },
         },
       ]}>
         <input />
