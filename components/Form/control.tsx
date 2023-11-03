@@ -1,8 +1,8 @@
+import isEqualWith from 'lodash/isEqualWith';
 import React, { Component } from 'react';
-import { isSyntheticEvent } from '../_util/is';
+import { isArray, isFieldMatch, isFunction, isSyntheticEvent } from '../_util/is';
 import { FormItemContext } from './context';
 import { schemaValidate } from './utils';
-
 
 export default class Control extends Component<any> {
   static defaultProps = {
@@ -16,6 +16,8 @@ export default class Control extends Component<any> {
 
   private warnings;
 
+  private childrenElement: React.ReactNode = null;
+
   context: React.ContextType<typeof FormItemContext>;
 
   child: any;
@@ -26,7 +28,6 @@ export default class Control extends Component<any> {
     super(props);
   }
 
-
   private setWarnings = (warnings) => {
     this.warnings = warnings;
   };
@@ -34,7 +35,6 @@ export default class Control extends Component<any> {
   private setErrors = (errors) => {
     this.errors = errors;
   };
-
 
   componentDidMount(): void {
     const { store } = this.context;
@@ -47,15 +47,47 @@ export default class Control extends Component<any> {
   componentWillUnmount() {
     this.removeRegisterField && this.removeRegisterField();
     this.removeRegisterField = null;
-
   }
 
+  public hasFieldProps = (): boolean => {
+    return !!this.props.field;
+  };
+
+  public onStoreChange = (type, info) => {
+    const { shouldUpdate } = this.props;
+    const fields = isArray(info.field) ? info.field : [info.field];
+    const { field } = this.props;
+    const shouldUpdateItem = (extra?) => {
+      if (shouldUpdate) {
+        let shouldRender = false;
+        if (isFunction(shouldUpdate)) {
+          shouldRender = shouldUpdate(info.prev, info.current, {
+            field: info.field,
+            ...extra,
+          });
+        } else {
+          // 不懂 isEqualWith作用是什么
+          shouldRender = !isEqualWith(info.prev, info.current);
+        }
+        shouldRender && this.updateFormItem();
+      }
+    };
+    switch (type) {
+      case 'innerSetValue':
+        console.log(info.field, 'info.field');
+        if (isFieldMatch(field, fields)) {
+          this.updateFormItem();
+        } else {
+          shouldUpdateItem();
+        }
+        break;
+    }
+  };
   private getFieldValue = () => {
     const field = this.props.field;
     const store = this.context.store;
     return field ? store.getInnerMethods(true).innerGetFieldValue(field) : undefined;
   };
-
 
   private updateFormItem = () => {
     this.forceUpdate();
@@ -67,14 +99,10 @@ export default class Control extends Component<any> {
     });
   };
 
-
-  validateField = (
-    triggerType?: string
-  ): Promise<any> => {
-    const { } = this.context;
+  validateField = (triggerType?: string): Promise<any> => {
+    const {} = this.context;
     const { field, rules } = this.props;
     const value = this.getFieldValue();
-
 
     const validateMessages = {
       required: '#{field} 是必填项',
@@ -121,19 +149,17 @@ export default class Control extends Component<any> {
         true: '期望是 `true`',
         false: '期望是 `false`',
       },
-    }
+    };
 
     const _rules = !triggerType
       ? rules
       : (rules || []).filter((rule) => {
-        const triggers = [].concat(rule.validateTrigger);
-        return triggers.indexOf(triggerType) > -1;
-      });
+          const triggers = [].concat(rule.validateTrigger);
+          return triggers.indexOf(triggerType) > -1;
+        });
 
     if (_rules && _rules.length && field) {
-
       return schemaValidate(field, value, _rules, validateMessages).then(({ error, warning }) => {
-
         this.setErrors(error ? error[field] : null);
         this.setWarnings(warning || null);
         this.updateFormItem();
@@ -141,7 +167,6 @@ export default class Control extends Component<any> {
         return Promise.resolve({ error, value, field });
       });
     }
-
 
     return Promise.resolve({ error: null, value, field });
   };
@@ -151,9 +176,8 @@ export default class Control extends Component<any> {
       _value = _value.nativeEvent.target.value;
     }
 
-
     this.innerSetFieldValue(field, _value);
-    
+
     this.validateField(trigger);
   };
 
@@ -164,8 +188,29 @@ export default class Control extends Component<any> {
     methods.innerSetFieldValue(field, value);
   };
 
+  getChild = () => {
+    const { children } = this.props;
+    const { store } = this.context;
+    let child = children;
+    if (isFunction(children)) {
+      child = children(
+        store.getFields()
+        // {
+        //   ...store,
+        // },
+        // this.props.isFormList && {
+        //   value: this.getFieldValue(),
+        //   onChange: this.handleTrigger,
+        // }
+      );
+    }
+    console.log('child', child);
+    return child;
+  };
+
   renderControl(children, field) {
     const { trigger } = this.props;
+
     const child = React.Children.only(children);
     const childProps = {
       [trigger]: this.handleTrigger,
@@ -176,7 +221,8 @@ export default class Control extends Component<any> {
 
   render() {
     const { children, field } = this.props;
-    let child = this.renderControl(children, field);
+    let child = this.getChild();
+    child = this.renderControl(children, field);
     return child;
   }
 }

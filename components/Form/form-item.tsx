@@ -80,10 +80,10 @@ const Item = (props) => {
       <FormItemContext.Provider value={formItemContext}>
         {/* // 不懂 为什么不能 cloneElementWithDisabled */}
         {cloneElementWithDisabled()}
-        {JSON.stringify(errors)}
-        {JSON.stringify(warnings)}
+        <div>{JSON.stringify(errors)}</div>
+        <div>{JSON.stringify(warnings)}</div>
       </FormItemContext.Provider>
-    </FormContext.Provider>
+    </FormContext.Provider >
   );
 };
 

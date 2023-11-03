@@ -9,6 +9,7 @@
     "declaration": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,
+
     "skipLibCheck": true,
     "esModuleInterop": true,
     "downlevelIteration": true,

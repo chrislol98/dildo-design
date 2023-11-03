@@ -25,7 +25,8 @@ const Form = (baseProps, ref) => {
     },
     onSubmit: (values) => {
       props.onSubmit(values);
-    }
+    },
+    onSubmitFailed: props.onSubmitFailed,
   });
 
   const formContextValue = {
@@ -33,7 +34,6 @@ const Form = (baseProps, ref) => {
   };
 
   return <FormContext.Provider value={formContextValue}>
-
     <Wrapper
       onSubmit={(e) => {
         // 不懂 为什么要这两个

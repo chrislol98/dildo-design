@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 import { cloneDeep, set } from '../_util/lodash';
 import promisify from '../_util/promisify';
-
+import { FormValidateFn } from './interface';
 class Store<StoreData> {
   // store
   // 不懂 报错 private store: StoreData = {};
@@ -14,11 +14,25 @@ class Store<StoreData> {
   public innerSetFieldValue = (field, value) => {
     if (!field) return;
     console.log(field, value, 'field');
+    const prev = cloneDeep(this.store);
     set(this.store, field, value);
     this.triggerTouchChange({ [field]: value });
     this.triggerValuesChange({ [field]: value });
+    this.notify('innerSetValue', {
+      prev,
+      current: this.store,
+      field,
+      changeValues: {
+        [field]: value,
+      },
+    });
   };
 
+  private notify = (type, info) => {
+    this.registerFields.forEach((item) => {
+      item.onStoreChange && item.onStoreChange(type, info);
+    });
+  };
   public innerSetCallbacks = (values) => {
     this.callbacks = values;
   };
@@ -66,8 +80,13 @@ class Store<StoreData> {
     }
   }
 
-  public validate = promisify((fieldsOrCallback, callback) => {
+  public validate: FormValidateFn<FormData> = promisify((fieldsOrCallback, callback) => {
     let controlItems = this.getRegisteredFields(true, {});
+
+    if (typeof fieldsOrCallback === 'function') {
+      callback = fieldsOrCallback;
+    }
+
     const promises = controlItems.map((x) => x.validateField());
     Promise.all(promises).then((result) => {
       let errors = {};
@@ -90,9 +109,18 @@ class Store<StoreData> {
   });
 
   public submit = () => {
-    const { onSubmit } = this.callbacks;
-    onSubmit && onSubmit(this.getFields());
+    this.validate((errors, values) => {
+      let result;
+
+      const { onSubmit, onSubmitFailed } = this.callbacks;
+
+      if (!errors && onSubmit) {
+        result = onSubmit(values);
+      }
+      if (errors && onSubmitFailed) {
+        result = onSubmitFailed(errors);
+      }
+    });
   };
 }
-
 export default Store;
