@@ -13,6 +13,10 @@ import { Form } from '../components';
 // 表单校验 差能調用form.validate
 // 多表单联动
 // useWatch
+
+const DynamicContent = () => {
+  return <div>{~~(Math.random() * 1000)}</div>;
+};
 const Demo = () => {
   return (
     <Form
@@ -58,7 +62,8 @@ const Demo = () => {
           {/* {() => {
             return <div>{~~(Math.random() * 1000)}</div>;
           }} */}
-          <div>{new Date().getTime()}</div>
+          {/* // 不懂，这样就不报错了 */}
+          <DynamicContent />
         </Form.Item>
       </Form.Item>
 

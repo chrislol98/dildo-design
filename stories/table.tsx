@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { flexRender, useReactTable } from '../components/@tanstack/react-table/src/index';
-import { createColumnHelper, getCoreRowModel } from '../components/@tanstack/table-core/src/index';
+import { flexRender, useReactTable } from '../otherCom/@tanstack/react-table/src/index';
+import { createColumnHelper, getCoreRowModel } from '../otherCom/@tanstack/table-core/src/index';
 
 type Person = {
   firstName: string;

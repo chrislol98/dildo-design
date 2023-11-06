@@ -16,7 +16,7 @@ export default class Control extends Component<any> {
 
   private warnings;
 
-  private childrenElement: React.ReactNode = null;
+  // private childrenElement: React.ReactNode = null;
 
   context: React.ContextType<typeof FormItemContext>;
 
@@ -192,6 +192,7 @@ export default class Control extends Component<any> {
     const { children } = this.props;
     const { store } = this.context;
     let child = children;
+    console.log(child, 'child');
     if (isFunction(children)) {
       child = children(
         store.getFields()
