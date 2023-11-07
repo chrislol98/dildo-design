@@ -431,7 +431,7 @@ export function createTable<TData extends RowData>(
         const recurseColumns = (
           columnDefs: ColumnDef<TData, unknown>[],
           parent?: Column<TData, unknown>,
-          depth = 0
+          depth = 0 
         ): Column<TData, unknown>[] => {
           return columnDefs.map(columnDef => {
             const column = createColumn(table, columnDef, depth, parent)

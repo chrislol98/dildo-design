@@ -47,6 +47,7 @@ const columns = [
   }),
   columnHelper.accessor((row) => row.lastName, {
     id: 'lastName',
+
     cell: (info) => <i>{info.getValue()}</i>,
     header: () => <span>Last Name</span>,
     footer: (info) => info.column.id,
