@@ -99,7 +99,7 @@ export default class Control extends Component<any> {
     });
   };
 
-  validateField = (triggerType?: string): Promise<any> => {
+  validateField = (triggerType) => {
     const {} = this.context;
     const { field, rules } = this.props;
     const value = this.getFieldValue();

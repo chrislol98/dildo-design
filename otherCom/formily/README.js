@@ -11,8 +11,12 @@ if (observableResult) {
 reactionsMap = new Map([[key, reactions]]);
 RawReactionsMap = new Map([[target, reactionsMap]]);
 
-// 收集依赖
-tracker();
+// 栈结构实现依赖收集
+const reaction = () => {
+  ReactionStack.push(reaction);
+  tracker();
+  ReactionStack.pop();
+};
 
 // 响应式核心：当响应式数据a改变了，对应用到a的函数要重新计算，目的就是为了得到最新的结果
 // 不懂 收集响应式数据的observableValues.username的回调
@@ -41,3 +45,4 @@ const base = {
 
 let pA = new Proxy(a, base);
 pA.b;
+

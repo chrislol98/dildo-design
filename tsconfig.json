@@ -6,6 +6,7 @@
     "target": "es5",
     "lib": ["es5", "dom"],
     "moduleResolution": "node",
+    "allowJs": true,
     "declaration": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,

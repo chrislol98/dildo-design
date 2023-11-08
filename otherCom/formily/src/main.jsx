@@ -25,3 +25,14 @@ autorun(() => {
 });
 form.values.username.value = 'jiagou';
 form.fields.username.name = '密码';
+
+// import { observable, Tracker } from '@/@formily/reactive';
+// const values = { username: 'zhufeng', home: { name: 'beijing' } };
+// const observableValues = observable(values);
+// const tracker = new Tracker(() => {
+//   console.log('forceUpate');
+// });
+// tracker.track(() => {
+//   console.log(observableValues.username);
+// });
+// observableValues.username = 'jiagou';

@@ -1,15 +1,4 @@
-import React, {
-  cloneElement,
-  ReactElement,
-  forwardRef,
-  useContext,
-  PropsWithChildren,
-  useState,
-  useEffect,
-  useMemo,
-  ReactNode,
-  useRef,
-} from 'react';
+import React, { ReactNode, useContext, useState } from 'react';
 import { FormContext, FormItemContext } from './context';
 import Control from './control';
 
@@ -23,15 +12,13 @@ const Item = (props) => {
     [key: string]: ReactNode[];
   }>(null);
 
-
   const updateFormItem = (
     field: string,
     params: {
-      errors
-      warnings
+      errors;
+      warnings;
     }
   ) => {
-
     const { errors, warnings } = params || {};
 
     setErrors((innerErrors) => {
@@ -68,11 +55,10 @@ const Item = (props) => {
     return children;
   };
 
-
   // 不懂 感觉这么用是不对的，要怎么改
   const formItemContext = {
     ...formContext,
-    updateFormItem
+    updateFormItem,
   };
 
   return (
@@ -83,7 +69,7 @@ const Item = (props) => {
         <div>{JSON.stringify(errors)}</div>
         <div>{JSON.stringify(warnings)}</div>
       </FormItemContext.Provider>
-    </FormContext.Provider >
+    </FormContext.Provider>
   );
 };
 
