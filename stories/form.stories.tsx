@@ -58,11 +58,6 @@ const Demo = () => {
           rules={[{ required: true, validateTrigger: 'onChange' }]}
           shouldUpdate
         >
-          {/* // 不懂 传函数到底编译成什么？报错了 */}
-          {/* {() => {
-            return <div>{~~(Math.random() * 1000)}</div>;
-          }} */}
-          {/* // 不懂，这样就不报错了 */}
           <DynamicContent />
         </Form.Item>
       </Form.Item>
