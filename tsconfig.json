@@ -1,21 +1,14 @@
 {
   "compilerOptions": {
-    "outDir": "es",
-    "jsx": "react-jsx",
-    "module": "es6",
-    "target": "es5",
-    "lib": ["es5", "dom"],
-    "moduleResolution": "node",
-    "allowJs": true,
-    "declaration": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": false,
-
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
+    "module": "ESNext",
+    "target": "ES6",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "resolveJsonModule": true,
+    "noImplicitAny": false,
+    "lib": ["esnext", "dom"],
+    "allowJs": true,
     "baseUrl": "./",
     "paths": {
       "@arco-design/web-react": ["components/index.tsx"],
@@ -23,11 +16,5 @@
       "test-utils": ["tests/util.ts"]
     }
   },
-  "include": [
-    "components/**/*.ts",
-    "components/**/*.tsx",
-    "stories/**/*.tsx",
-    "typings/utils.d.ts"
-  ],
-  "exclude": ["node_modules", "components/**/*.test.tsx", "components/**/*.test.ts"]
+  "include": ["components/**/*.ts", "components/**/*.tsx", "stories/**/*.tsx", "typings/utils.d.ts"]
 }
