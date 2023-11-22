@@ -12,6 +12,15 @@ function Form(props, ref) {
     isMount.current = true;
   }, []);
 
+  formInstance.setCallbacks({
+    onChange: props.onChange
+  })
+
+  React.useImperativeHandle(ref, () => {
+    return formInstance;
+  });
+
+  
   const FormContextValue = {
     formInstance,
   };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Store from './store';
-export default function useForm(form) {
+export default function useForm(form?) {
   const formRef = React.useRef(form);
   if (!formRef.current) {
     if (form) {
@@ -12,15 +12,14 @@ export default function useForm(form) {
   return [formRef.current];
 }
 
-export function getFormInstance() {
+function getFormInstance() {
   const store = new Store();
   return {
-    submit: store.submit,
-    getFields: store.getFields,
+    setCallbacks: store.setCallbacks,
     registerField: store.registerField,
     getStore: store.getStore,
     setValue: store.setValue,
     setInitialValues: store.setInitialValues,
-    
+    setInitialValue: store.setInitialValue,
   };
 }

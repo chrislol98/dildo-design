@@ -12,7 +12,7 @@ export default class Control extends React.Component<any> {
     const { field } = props;
     const { formInstance } = context;
     if ('initialValue' in props && field) {
-      formInstance.setValue(field, props.initialValue);
+      formInstance.setInitialValue(field, props.initialValue);
     }
   }
   componentDidMount() {
@@ -21,12 +21,10 @@ export default class Control extends React.Component<any> {
   }
 
   onStoreChange = () => {
-    console.log('onStorageChange')
     this.forceUpdate();
   };
 
   handleTrigger = (value) => {
- 
     const { formInstance } = this.context;
     const { field } = this.props;
     if (isSyntheticEvent(value)) {

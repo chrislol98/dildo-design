@@ -1,11 +1,19 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { Form } from '../components';
+import * as React from 'react';
 const App = () => {
+  // const [form] = Form.useForm();
+  const formRef = React.useRef();
   return (
     <Form
+      // form={form}
+      ref={formRef}
       initialValues={{
         xzc: 234,
         zzw: 1111111111111,
+      }}
+      onChange={() => {
+        console.log('onchange');
       }}
     >
       <Form.Item initialValue={123} field="xzc">
