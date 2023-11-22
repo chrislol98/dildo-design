@@ -18,5 +18,9 @@ export function getFormInstance() {
     submit: store.submit,
     getFields: store.getFields,
     registerField: store.registerField,
+    getStore: store.getStore,
+    setValue: store.setValue,
+    setInitialValues: store.setInitialValues,
+    
   };
 }

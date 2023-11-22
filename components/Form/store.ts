@@ -1,16 +1,28 @@
-import get from 'lodash/get'
-import set from 'lodash/set'
+import set from 'lodash/set';
 export default class Store {
-  private store =  {};
-  // private initialValues ={};
+  private store = {};
+  private registerFields = [];
   public submit = () => {};
-  public getFields = () => {};
-  public registerField = () => {};
+
+  public registerField = (item) => {
+    this.registerFields.push(item);
+  };
   public getStore = () => {
-    return this.store
-  }
+    return this.store;
+  };
 
   public setValue = (field, value) => {
-    set(this.store, field, value)
-  }
+    set(this.store, field, value);
+    this.notify();
+  };
+
+  public setInitialValues = (initialValues) => {
+    this.store = initialValues;
+  };
+
+  notify = () => {
+    this.registerFields.forEach((item) => {
+      item.onStoreChange();
+    });
+  };
 }

@@ -1,11 +1,23 @@
 import * as React from 'react';
-import { FormContext as RawFormContext } from './context';
+import { FormContext } from './context';
+import useForm from './useForm';
 function Form(props, ref) {
-  const FormContext = React.useContext(RawFormContext);
-  
+  const [formInstance] = useForm(props.form);
+  const isMount = React.useRef<any>();
+  // todo
+  if (!isMount.current) {
+    formInstance.setInitialValues(props.initialValues);
+  }
+  React.useEffect(() => {
+    isMount.current = true;
+  }, []);
+
+  const FormContextValue = {
+    formInstance,
+  };
   return (
-    <FormContext.Provider>
-      {/* <form>{props.children}</form> */}
+    <FormContext.Provider value={FormContextValue}>
+      <form>{props.children}</form>
     </FormContext.Provider>
   );
 }
