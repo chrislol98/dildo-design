@@ -1,5 +1,5 @@
-import { default as RawForm } from './form';
-import Item from './Item';
+import  RawForm from './form';
+import Item from './item';
 type FormType = typeof RawForm & {
   Item: typeof Item;
 };

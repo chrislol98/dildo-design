@@ -18,16 +18,5 @@ export function getFormInstance() {
     submit: store.submit,
     getFields: store.getFields,
     registerField: store.registerField,
-    getInnerMethods: (inner) => {
-      const methods = {};
-      if (inner) {
-        ['innerSetFieldValue', 'innerSetCallbacks', 'registerField', 'innerGetFieldValue'].map(
-          (key) => {
-            methods[key] = store[key];
-          }
-        );
-      }
-      return methods;
-    },
   };
 }

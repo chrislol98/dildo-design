@@ -1,7 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
-import Form from '../components';
+import {Form} from '../components';
 const App = () => {
-  return <Form></Form>;
+  return <Form>
+    <Form.Item initialValue={123}>
+      <input></input>
+    </Form.Item>
+
+  </Form>;
 };
 
 const meta: Meta<typeof App> = {

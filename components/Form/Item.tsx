@@ -1,6 +1,8 @@
 import * as React from 'react';
+import Control from './control';
 function Item(props, ref) {
-  return <div>{props.children}</div>;
+
+  return <Control {...props}>{props.children}</Control>;
 }
 
 const forwardRefItem = React.forwardRef(Item);
