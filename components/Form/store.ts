@@ -1,5 +1,6 @@
 import set from 'lodash/set';
 import { promisify } from '../shared';
+import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 export default class Store {
   private store = {};
@@ -72,17 +73,24 @@ export default class Store {
     this.triggerChange({ field: value });
     this.notify();
   };
-
+  public setValues = (values) => {
+    this.store = values;
+  };
   public getValue = (field) => {
     return get(this.store, field);
   };
 
   public setInitialValues = (initialValues) => {
     this.initialValues = initialValues;
+
+    Object.keys(initialValues).forEach((field) => {
+      set(this.store, field, initialValues[field]);
+    });
   };
 
   public setInitialValue = (field, initialValue) => {
     this.initialValues[field] = initialValue;
+    set(this.store, field, initialValue);
   };
 
   notify = () => {
@@ -91,11 +99,22 @@ export default class Store {
     });
   };
 
-  public resetFields = (field?: string | any[]) => {
-    if (typeof field === 'string') field = [field];
-    if (Array.isArray(field)) {
+
+  // todo
+  public resetFields = (fields?: string | any[]) => {
+    if (typeof fields === 'string') fields = [fields];
+    if (Array.isArray(fields)) {
       const changeValue = {};
+      fields.forEach((field) => {
+        // set的作用
+        // field = 'a.b'
+        // 正常    {'a.b': 1} 
+        // set    {a: {b: 1}}
+        set(this.store, field, this.initialValues[field]);
+        changeValue[field] = this.initialValues[field];
+      });
     } else {
+      this.setValues(cloneDeep(this.initialValues));
     }
   };
 }

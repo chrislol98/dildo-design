@@ -34,7 +34,6 @@ function Form(props, ref) {
           formInstance.submit();
         }}
       >
-        {' '}
         {props.children}
       </form>
     </FormContext.Provider>
