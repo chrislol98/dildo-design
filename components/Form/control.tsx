@@ -35,13 +35,14 @@ export default class Control extends React.Component<any> {
     formInstance.setValue(field, value);
   };
 
-  // todo
   validate = () => {
     const { formInstance } = this.context;
-    const value = formInstance
+    const { field } = this.props;
+    const value = formInstance.getValue(field);
+    // 不懂 校验
 
+    return Promise.resolve({ error: null, value, field });
   };
-
 
   render() {
     const { field, children } = this.props;

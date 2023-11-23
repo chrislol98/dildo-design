@@ -1,8 +1,9 @@
 import set from 'lodash/set';
 import { promisify } from '../shared';
-import get from 'lodash/get'
+import get from 'lodash/get';
 export default class Store {
   private store = {};
+  private initialValues = {};
   private registerFields = [];
   private callbacks: any = {};
 
@@ -66,10 +67,6 @@ export default class Store {
     this.callbacks = values;
   };
 
-  public setInitialValues = (initialValues) => {
-    this.store = initialValues;
-  };
-
   public setValue = (field, value) => {
     set(this.store, field, value);
     this.triggerChange({ field: value });
@@ -77,16 +74,28 @@ export default class Store {
   };
 
   public getValue = (field) => {
-    return get(this.store, field)
-  }
+    return get(this.store, field);
+  };
+
+  public setInitialValues = (initialValues) => {
+    this.initialValues = initialValues;
+  };
 
   public setInitialValue = (field, initialValue) => {
-    this.store[field] = initialValue;
+    this.initialValues[field] = initialValue;
   };
 
   notify = () => {
     this.registerFields.forEach((item) => {
       item.onStoreChange();
     });
+  };
+
+  public resetFields = (field?: string | any[]) => {
+    if (typeof field === 'string') field = [field];
+    if (Array.isArray(field)) {
+      const changeValue = {};
+    } else {
+    }
   };
 }

@@ -18,6 +18,7 @@ function getFormInstance() {
     setCallbacks: store.setCallbacks,
     registerField: store.registerField,
     setValue: store.setValue,
+    getValue: store.getValue,
     getStore: store.getStore,
     setInitialValues: store.setInitialValues,
     setInitialValue: store.setInitialValue,

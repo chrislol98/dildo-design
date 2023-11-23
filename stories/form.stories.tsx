@@ -16,7 +16,7 @@ const App = () => {
         console.log('onchange');
       }}
       onSubmit={(values) => {
-        console.log(values)
+        console.log(values);
       }}
     >
       <Form.Item initialValue={123} field="xzc">
@@ -27,7 +27,6 @@ const App = () => {
       </Form.Item>
     </Form>
   );
- 
 };
 
 const meta: Meta<typeof App> = {
