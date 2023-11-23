@@ -17,9 +17,10 @@ function getFormInstance() {
   return {
     setCallbacks: store.setCallbacks,
     registerField: store.registerField,
-    getStore: store.getStore,
     setValue: store.setValue,
+    getStore: store.getStore,
     setInitialValues: store.setInitialValues,
     setInitialValue: store.setInitialValue,
+    submit: store.submit
   };
 }

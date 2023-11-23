@@ -13,20 +13,30 @@ function Form(props, ref) {
   }, []);
 
   formInstance.setCallbacks({
-    onChange: props.onChange
-  })
+    onChange: props.onChange,
+    onSubmit: props.onSubmit,
+    onSubmitFailed: props.onSubmitFail,
+  });
 
   React.useImperativeHandle(ref, () => {
     return formInstance;
   });
 
-  
   const FormContextValue = {
     formInstance,
   };
   return (
     <FormContext.Provider value={FormContextValue}>
-      <form>{props.children}</form>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          formInstance.submit();
+        }}
+      >
+        {' '}
+        {props.children}
+      </form>
     </FormContext.Provider>
   );
 }

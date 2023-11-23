@@ -1,12 +1,12 @@
 import get from 'lodash/get';
 import * as React from 'react';
 import { isSyntheticEvent } from '../shared';
-import { ItemContext } from './context';
+import { ItemContext, FormContext } from './context';
 export default class Control extends React.Component<any> {
   // 不懂 static 有什么用？
-  static contextType = ItemContext;
+  static contextType = FormContext;
   context: any;
-
+  removeRegisterField;
   constructor(props, context) {
     super(props);
     const { field } = props;
@@ -17,9 +17,11 @@ export default class Control extends React.Component<any> {
   }
   componentDidMount() {
     const { formInstance } = this.context;
-    formInstance.registerField(this);
+    this.removeRegisterField = formInstance.registerField(this);
   }
-
+  componentWillUnmount() {
+    this.removeRegisterField?.();
+  }
   onStoreChange = () => {
     this.forceUpdate();
   };
@@ -33,15 +35,26 @@ export default class Control extends React.Component<any> {
     formInstance.setValue(field, value);
   };
 
+  // todo
+  validate = () => {
+    const { formInstance } = this.context;
+    const value = formInstance
+
+  };
+
+
   render() {
     const { field, children } = this.props;
     const { formInstance } = this.context;
 
-    const childProps = {
-      onChange: this.handleTrigger,
-      value: get(formInstance.getStore(), field),
-    };
-
-    return <div>{React.cloneElement(children, childProps)}</div>;
+    if (field) {
+      const childProps = {
+        onChange: this.handleTrigger,
+        value: get(formInstance.getStore(), field),
+      };
+      return <div>{React.cloneElement(children, childProps)}</div>;
+    } else {
+      return children;
+    }
   }
 }

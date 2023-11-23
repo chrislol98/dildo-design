@@ -15,15 +15,19 @@ const App = () => {
       onChange={() => {
         console.log('onchange');
       }}
+      onSubmit={(values) => {
+        console.log(values)
+      }}
     >
       <Form.Item initialValue={123} field="xzc">
         <input></input>
       </Form.Item>
       <Form.Item field="zzw">
-        <input></input>
+        <input type="submit"></input>
       </Form.Item>
     </Form>
   );
+ 
 };
 
 const meta: Meta<typeof App> = {

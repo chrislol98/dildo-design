@@ -3,13 +3,7 @@ import { useContext } from 'react';
 import { FormContext, ItemContext } from './context';
 import Control from './control';
 function Item(props, ref) {
-  const formContext = useContext(FormContext);
-
-  return (
-    <ItemContext.Provider value={{ ...formContext }}>
-      <Control {...props}>{props.children}</Control>
-    </ItemContext.Provider>
-  );
+  return <Control {...props}>{props.children}</Control>;
 }
 
 const forwardRefItem = React.forwardRef(Item);
