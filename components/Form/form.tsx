@@ -1,16 +1,13 @@
 import * as React from 'react';
 import { FormContext } from './context';
 import useForm from './useForm';
+import { useCallOnce } from '../shared';
 function Form(props, ref) {
   const [formInstance] = useForm(props.form);
-  const isMount = React.useRef<any>();
-  // todo
-  if (!isMount.current) {
+
+  useCallOnce(() => {
     formInstance.setInitialValues(props.initialValues);
-  }
-  React.useEffect(() => {
-    isMount.current = true;
-  }, []);
+  });
 
   formInstance.setCallbacks({
     onChange: props.onChange,

@@ -99,18 +99,16 @@ export default class Store {
     });
   };
 
-  // todo
+
   public resetFields = (fields?: string | string[]) => {
     if (typeof fields === 'string') fields = [fields];
     if (Array.isArray(fields)) {
-      const changeValue = {};
       fields.forEach((field) => {
         // set的作用
         // field = 'a.b'
         // 正常    {'a.b': 1}
         // set    {a: {b: 1}}
         set(this.store, field, this.initialValues[field]);
-        changeValue[field] = this.initialValues[field];
       });
     } else {
       this.setValues(cloneDeep(this.initialValues));
@@ -121,14 +119,8 @@ export default class Store {
   public clearFields = (fields?: string | string[]) => {
     if (typeof fields === 'string') fields = [fields];
     if (Array.isArray(fields)) {
-      const changeValue = {};
       fields.forEach((field) => {
-        // set的作用
-        // field = 'a.b'
-        // 正常    {'a.b': 1}
-        // set    {a: {b: 1}}
         set(this.store, undefined);
-        changeValue[field] = this.initialValues[field];
       });
     } else {
       this.setValues(cloneDeep(this.initialValues));

@@ -27,13 +27,18 @@ export function useCreation(factory, deps) {
   }
   return current.obj;
 }
-
+export function useCallOnce(fn) {
+  const hasBeenCalled = useRef(false);
+  if (hasBeenCalled.current === false) {
+    fn();
+    hasBeenCalled.current = true;
+  }
+}
 
 // utils
 export function isSyntheticEvent(e: any): boolean {
   return e?.constructor?.name === 'SyntheticEvent' || e?.nativeEvent instanceof Event;
 }
-
 
 // 如果没有回调，给函数最后一个参数加一个回调函数，返回promise
 export function promisify<T = any>(fn: (...args: any[]) => any): () => Promise<T> {

@@ -22,6 +22,8 @@ function getFormInstance() {
     getStore: store.getStore,
     setInitialValues: store.setInitialValues,
     setInitialValue: store.setInitialValue,
-    submit: store.submit
+    submit: store.submit,
+    resetFields: store.resetFields,
+    clearFields: store.clearFields
   };
 }
