@@ -1,0 +1,1 @@
+export const { PROCESS_ENV_BUILD_ES, PROCESS_ENV_BUILD_CJS, PROCESS_ENV_BUILD_BABEL } = process.env;
