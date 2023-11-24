@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-// hooks
+// hooks //////////////////////////////////////////////////////////////////////
 export default function depsAreSame(oldDeps, deps) {
   if (oldDeps === deps) return true;
   for (let i = 0; i < oldDeps.length; i++) {
@@ -34,11 +34,7 @@ export function useCallOnce(fn) {
     hasBeenCalled.current = true;
   }
 }
-
-// utils
-export function isSyntheticEvent(e: any): boolean {
-  return e?.constructor?.name === 'SyntheticEvent' || e?.nativeEvent instanceof Event;
-}
+// utils //////////////////////////////////////////////////////////////////////
 
 // 如果没有回调，给函数最后一个参数加一个回调函数，返回promise
 export function promisify<T = any>(fn: (...args: any[]) => any): () => Promise<T> {
@@ -59,4 +55,14 @@ export function promisify<T = any>(fn: (...args: any[]) => any): () => Promise<T
     'name',
     { value: fn.name }
   );
+}
+
+// is //////////////////////////////////////////////////////////////////////
+
+export function isSyntheticEvent(e: any): boolean {
+  return e?.constructor?.name === 'SyntheticEvent' || e?.nativeEvent instanceof Event;
+}
+
+export function isObject(obj: any): obj is { [key: string]: any } {
+  return Object.prototype.toString.call(obj) === '[object Object]';
 }
