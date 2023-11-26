@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // api 闭包  mdn:函数和周边词法作用域的集合叫做闭包，可以在浏览器的堆快照中看到闭包有多少个。每当创建一个函数，闭包就会在函数创建的同时被创建出来。
+      // 只不过你这个函数如果没有挂在全局，那么这个闭包只会短暂的存在，然后跟着函数一起销毁了
+
+      // api 谷歌v8优化
+      // 优化1.函数创建的时候, new FunctionInstance('A3', 'console.log(a2)', [A2词法环境，A3词法环境]),他不像标准只存父级的scope,而是存了所有的上级词法环境。这样不用像fireFox逐层往上找，直接遍历数组就行了
+      // 优化1.而fireFox没有
+      // 优化2. 在创建函数的时候，还会把整个词法环境链条上的所有对象，做一个treeShaking操作，去掉没用到的变量。所以性能比fireFox好
+      function A1() {
+        var a1 = { name: "a1" };
+        var a2 = { name: "a2" };
+        debugger;
+        function A2() {
+          console.log(a1);
+        }
+        function A3() {
+          console.log(a2);
+        }
+        return [A2, A3];
+      }
+      debugger;
+      let A2 = A1();
+      A2();
+
+      ////////////////////////////////////////////////////////
+    </script>
+  </body>
+</html>
