@@ -7,7 +7,7 @@ const Tr = (props, ref) => {
   return (
     <ComponentBodyRow ref={ref}>
       {columns.map((col, idx) => {
-        return <Td column={col} index={idx} record={record}></Td>;
+        return <Td key={idx} column={col} index={idx} record={record}></Td>;
       })}
     </ComponentBodyRow>
   );

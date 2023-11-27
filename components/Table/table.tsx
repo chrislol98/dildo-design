@@ -3,7 +3,7 @@ import TBody from './tbody';
 import THead from './thead';
 import ColGroup from './colgroup';
 import { useComponent, useColumns } from './shared';
-
+import { useMergeProps } from '../shared';
 const defaultProps = {
   rowKey: 'key',
   childrenColumnName: 'children',
@@ -27,41 +27,32 @@ const Table = function (props, ref) {
   const processedData = getProcessedData(data, {}, {}, {});
   const pageData = getPageData(processedData);
   const [groupColumns, flattenColumns] = useColumns(props);
+  // hooks
+  props = useMergeProps(props, defaultProps, {});
 
-  // handleEffect
+  // logic
   // const props = useMergeProps(baseProps, defaultProps);
 
   // render
   const renderTable = () => {
     return (
       <>
-        {renderThead()}
-        {renderTBody()}
+        <ComponentTable>
+          <ColGroup columns={flattenColumns} />
+          {renderThead()}
+          {renderTBody()}
+        </ComponentTable>
       </>
     );
   };
   const renderThead = () => {
     const thead = <THead {...props} data={pageData} groupColumns={groupColumns}></THead>;
-    return (
-      <ComponentHeaderWrapper>
-        <ComponentTable ref={tHeadRef}>
-          <ColGroup columns={flattenColumns} />
-          {thead}
-        </ComponentTable>
-      </ComponentHeaderWrapper>
-    );
+    return thead;
   };
   const renderTBody = () => {
     const tbody = <TBody {...props} data={pageData} columns={flattenColumns} />;
 
-    return (
-      <ComponentBodyWrapper ref={tBodyRef}>
-        <ComponentTable>
-          <ColGroup columns={flattenColumns} />
-          {tbody}
-        </ComponentTable>
-      </ComponentBodyWrapper>
-    );
+    return tbody;
   };
 
   return renderTable();
