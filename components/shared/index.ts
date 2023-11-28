@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import * as React from 'react'
+import * as React from 'react';
 // hooks //////////////////////////////////////////////////////////////////////
 export default function depsAreSame(oldDeps, deps) {
   if (oldDeps === deps) return true;
@@ -40,7 +40,7 @@ export type MergePropsOptions = {
   _ignorePropsFromGlobal?: boolean;
 };
 
-export  function useMergeProps<PropsType>(
+export function useMergeProps<PropsType>(
   componentProps: PropsType & MergePropsOptions,
   defaultProps: Partial<PropsType>,
   globalComponentConfig: Partial<PropsType>
@@ -113,4 +113,8 @@ export function isSyntheticEvent(e: any): boolean {
 
 export function isObject(obj: any): obj is { [key: string]: any } {
   return Object.prototype.toString.call(obj) === '[object Object]';
+}
+
+export function isNumber(obj: any): obj is number {
+  return Object.prototype.toString.call(obj) === '[object Number]' && obj === obj;
 }
