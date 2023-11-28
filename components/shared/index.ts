@@ -28,7 +28,7 @@ export function useCreation(factory, deps) {
   }
   return current.obj;
 }
-export function useCallOnce(fn) {
+export function useCreate(fn) {
   const hasBeenCalled = useRef(false);
   if (hasBeenCalled.current === false) {
     fn();

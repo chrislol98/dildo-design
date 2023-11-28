@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { FormContext } from './context';
 import useForm from './useForm';
-import { useCallOnce } from '../shared';
+import { useCreate } from '../shared';
 function Form(props, ref) {
   const [formInstance] = useForm(props.form);
 
-  useCallOnce(() => {
+  useCreate(() => {
     formInstance.setInitialValues(props.initialValues);
   });
 

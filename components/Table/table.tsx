@@ -18,6 +18,9 @@ function getPageData(data) {
 }
 
 const Table = function (props, ref) {
+
+  props = useMergeProps(props, defaultProps, {});
+  
   // value
   const { components, data = [], columns = [] } = props;
   const { ComponentTable, ComponentBodyWrapper, ComponentHeaderWrapper } = useComponent(components);
@@ -28,10 +31,10 @@ const Table = function (props, ref) {
   const pageData = getPageData(processedData);
   const [groupColumns, flattenColumns] = useColumns(props);
   // hooks
-  props = useMergeProps(props, defaultProps, {});
+
 
   // logic
-  // const props = useMergeProps(baseProps, defaultProps);
+
 
   // render
   const renderTable = () => {
