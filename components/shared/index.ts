@@ -1,13 +1,19 @@
 import { useEffect, useRef } from 'react';
 import * as React from 'react';
-// hooks //////////////////////////////////////////////////////////////////////
-export default function depsAreSame(oldDeps, deps) {
+
+/* -----------------hooks------------------ */
+function depsAreSame(oldDeps, deps) {
   if (oldDeps === deps) return true;
   for (let i = 0; i < oldDeps.length; i++) {
     if (!Object.is(oldDeps[i], deps[i])) return false;
   }
   return true;
 }
+
+export const useUpdate = () => {
+  const [, setState] = React.useState({});
+  return React.useCallback(() => setState({}), []);
+};
 
 export const useMount = (fn) => {
   useEffect(() => {
@@ -66,8 +72,10 @@ export function useMergeProps<PropsType>(
 
   return props;
 }
-// utils //////////////////////////////////////////////////////////////////////
 
+/* -----------------hooks end------------------ */
+
+/* -----------------utils------------------ */
 // 如果没有回调，给函数最后一个参数加一个回调函数，返回promise
 export function promisify<T = any>(fn: (...args: any[]) => any): () => Promise<T> {
   return Object.defineProperty(
@@ -104,9 +112,9 @@ export function omit<T extends object, K extends keyof T>(
   });
   return clone;
 }
+/* -----------------utils end------------------ */
 
-// is //////////////////////////////////////////////////////////////////////
-
+/* -----------------is------------------ */
 export function isSyntheticEvent(e: any): boolean {
   return e?.constructor?.name === 'SyntheticEvent' || e?.nativeEvent instanceof Event;
 }
@@ -118,3 +126,4 @@ export function isObject(obj: any): obj is { [key: string]: any } {
 export function isNumber(obj: any): obj is number {
   return Object.prototype.toString.call(obj) === '[object Number]' && obj === obj;
 }
+/* -----------------is end------------------ */

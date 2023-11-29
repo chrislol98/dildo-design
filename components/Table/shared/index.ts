@@ -17,3 +17,7 @@ export function getSorterFn(sorter) {
   }
   return null;
 }
+
+export const getColumnByKey = (flattenColumns, key) => {
+  return flattenColumns.find((column) => column.key === key);
+};
