@@ -5,15 +5,17 @@ const Th = (props, ref) => {
   const {
     components,
     column: { colSpan, title },
+    column,
     _key,
     onSort,
     sorter,
+    filter,
+    onFilter,
   } = props;
   const { ComponentTh, ComponentHeaderCell } = useComponent(components);
   const renderChildren = () => {
     return title;
   };
-
   const renderTh = () => {
     if (colSpan !== 0) {
       return (
@@ -35,6 +37,7 @@ const Th = (props, ref) => {
             >
               ⬇️
             </span>
+            <span onClick={() => onFilter(column,filter)}>过滤</span>
           </ComponentHeaderCell>
         </ComponentTh>
       );

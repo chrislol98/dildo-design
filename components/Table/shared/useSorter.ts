@@ -3,7 +3,7 @@ import { getSorterPriority, getSorterFn, getColumnByKey } from '../shared';
 import cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
 
-export default function useSorter(flattenColumns, data, childrenColumnName) {
+export default function useSorter(data, flattenColumns, childrenColumnName) {
   const [activeSorters, setActiveSorters] = React.useState(getDefaultSorters(flattenColumns));
 
   const getNextActiveSorters = React.useCallback(
@@ -51,12 +51,7 @@ export default function useSorter(flattenColumns, data, childrenColumnName) {
 
   const processedData = getProcessedData(data, childrenColumnName, activeSorters);
 
-  return {
-    processedData,
-    activeSorters,
-    getNextActiveSorters,
-    onSort,
-  };
+  return [processedData, activeSorters, onSort];
 }
 
 function getDefaultSorters(flattenColumns) {

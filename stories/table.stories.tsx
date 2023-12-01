@@ -5,6 +5,7 @@ const columns = [
   {
     title: 'Name',
     dataIndex: 'name',
+    // colSpan: 0,
     sorter: (a, b) => {
       if (a.name > b.name) {
         return 1;
@@ -19,11 +20,23 @@ const columns = [
     title: 'Age',
     dataIndex: 'age',
     sorter: (a, b) => a.age - b.age,
+    filters: [
+      {
+        text: '> 15',
+        value: '15',
+      },
+      {
+        text: '> 18',
+        value: '18',
+      },
+    ],
+    defaultFilters: ['18'],
+    onFilter: (value, row) => row.age > value,
   },
   {
     title: 'Score A',
     dataIndex: 'scoreA',
-    sortOrder: 'descend',
+    defaultFilters: 'descend',
     sorter: {
       compare: (a, b) => a.scoreA - b.scoreA,
       multiple: 3,

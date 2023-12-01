@@ -1,6 +1,7 @@
 export { default as useComponent } from './useComponent';
 export { default as useColumns } from './useColumns';
 export { default as useSorter } from './useSorter';
+export {default as useFilter} from './useFilter';
 
 export function getSorterPriority(sorter) {
   if (typeof sorter === 'object' && typeof sorter.multiple === 'number') {

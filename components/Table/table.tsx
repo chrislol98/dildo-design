@@ -2,8 +2,8 @@ import * as React from 'react';
 import TBody from './tbody';
 import THead from './thead';
 import ColGroup from './colgroup';
-import { useComponent, useColumns, useSorter, getSorterPriority, getSorterFn } from './shared';
-import { useMergeProps, useUpdate } from '../shared';
+import { useComponent, useColumns, useSorter, useFilter } from './shared';
+import { useMergeProps } from '../shared';
 
 function getPageData(data) {
   return data;
@@ -19,27 +19,26 @@ const Table = function (props, ref) {
   const { components, data = [], childrenColumnName } = props;
   const { ComponentTable } = useComponent(components);
   const [groupColumns, flattenColumns] = useColumns(props);
-  const { processedData, onSort, activeSorters } = useSorter(
-    flattenColumns,
-    data,
-    childrenColumnName
-  );
-  const pageData = getPageData(processedData);
+  const [sortedData, activeSorters, onSort] = useSorter(data, flattenColumns, childrenColumnName);
+  const [sortedAndFilteredData, filters, onFilter] = useFilter(sortedData, flattenColumns);
+  const progressedData = getPageData(sortedAndFilteredData);
 
   const renderThead = () => {
     const thead = (
       <THead
         {...props}
-        data={pageData}
+        data={progressedData}
         groupColumns={groupColumns}
         onSort={onSort}
+        onFilter={onFilter}
+        filters={filters}
         activeSorters={activeSorters}
       ></THead>
     );
     return thead;
   };
   const renderTBody = () => {
-    const tbody = <TBody {...props} data={pageData} columns={flattenColumns} />;
+    const tbody = <TBody {...props} data={progressedData} columns={flattenColumns} />;
     return tbody;
   };
   const renderTable = () => {
