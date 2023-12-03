@@ -1,7 +1,8 @@
 const tsc = require('node-typescript-compiler');
+const { PROCESS_ENV_BUILD_ES, PROCESS_ENV_BUILD_CJS, PROCESS_ENV_BUILD_BABEL } = require('../env');
 const { transform } = require('@babel/core');
 
-const build = () => {
+const run = () => {
   if (PROCESS_ENV_BUILD_BABEL) {
     withBabel();
   } else {
@@ -34,5 +35,5 @@ const getTsConfig = () => {
 };
 
 module.exports = {
-  build,
+  run,
 };

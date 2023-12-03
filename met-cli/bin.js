@@ -8,14 +8,14 @@ program
   .command('build:es')
   .description('build es module')
   .action(() => {
-    build.build();
+    build.run();
   });
 
 program
   .command('build:cjs')
   .description('build es module')
   .action(() => {
-    build.build();
+    build.run();
   });
 
 program.parse(process.argv);
