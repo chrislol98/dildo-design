@@ -15,18 +15,21 @@ svgs.forEach((svg) => {
       const files = fs.readdirSync(path.resolve(dirPath, d));
       dirData[d] = files.map((file) => {
         const data = {
-          name: file.slice(0, -4),
-          // todo
-          componentName: file.slice(0, -4),
+          name: camelCase(file.slice(0, -4)),
+          componentName: camelCase(file.slice(0, -4)),
           file: path.resolve(dirPath, d, file),
         };
         flatData.push(data);
         return data;
       });
     });
+    svgData[svg] = dirData;
   }
-
-  svgData[svg] = dirData;
 });
 
-module.exports = {svgData, flatData}
+function camelCase(str) {
+  return str.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : ''));
+}
+
+
+module.exports = { svgData, flatData };
