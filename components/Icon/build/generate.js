@@ -1,6 +1,9 @@
-const { flatData } = require('./getSvgData');
+const { flatData, svgData } = require('./getSvgData');
 const babel = require('@babel/core');
+const { optimize } = require('svgo');
 const fse = require('fs-extra');
+
+const nunjucks = require('nunjucks');
 
 const babelConfig = {
   presets: [
@@ -58,7 +61,7 @@ fse.outputFile('../index.js', babel.transform(entryCodeCjs, babelConfigCjs).code
   if (err) return;
 });
 
-function generateIcon() {
+function generateIcon(cjs) {
   const config = {
     plugins: [
       'removeUnknownsAndDefaults',
@@ -111,5 +114,41 @@ function generateIcon() {
       },
     ],
   };
-  flatData.forEach((data, idx) => {});
+  flatData.forEach((data, idx) => {
+    const svgCode = fse.readFileSync(data.file, 'utf8');
+    const svg = optimize(svgCode, { path: data.file, ...config })
+      .data.replace(/stroke-width=/g, 'strokeWidth=')
+      .replace(/stroke-linecap=/g, 'strokeLinecap=')
+      .replace(/stroke-linejoin=/g, 'strokeLinejoin=')
+      .replace(/fill-rule=/g, 'fillRule=')
+      .replace(/clip-rule=/g, 'clipRule=')
+      .replace(/stroke-miterlimit=/g, 'strokeMiterlimit=')
+      .replace(/class=/g, 'className=');
+
+    nunjucks.configure({ autoescape: false });
+    nunjucks.render(
+      './icon.template.nunjucks',
+      {
+        svg,
+        iconName: data.componentName,
+        iconClassName: data.name,
+      },
+      (err, res) => {
+        if (err) return;
+        console.log(res);
+        const code = babel.transform(res, cjs ? babelConfigCjs : babelConfig).code;
+
+        fse.outputFile(
+          `../${cjs ? 'react-icon-cjs' : 'react-icon'}/${data.componentName}/index.js`,
+          code,
+          (err) => {
+            if (err) return;
+          }
+        );
+      }
+    );
+  });
 }
+
+generateIcon();
+generateIcon(true);
