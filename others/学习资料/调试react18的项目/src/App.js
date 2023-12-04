@@ -25,8 +25,12 @@ export default function App() {
   );
 }
 
-const Child = React.memo((props) => {
+// const Child = React.memo((props) => {
+//   return <div>Child</div>;
+// });
+const Child = (props) => {
   return <div>Child</div>;
-});
+};
+Child.displayName = 'Child';
 
 console.log(React.createElement('div', {}));
