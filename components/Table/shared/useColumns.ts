@@ -12,6 +12,7 @@ export default function useColumns(props) {
     });
     return _rows;
   }, []);
+
   const flattenColumns = React.useMemo(
     () => processColumns(getFlattenColumns(columns, childrenColumnName)),
     [columns, childrenColumnName]
@@ -31,7 +32,33 @@ export default function useColumns(props) {
       });
       return [processColumns(rows)];
     }
-  }, [columns, childrenColumnName, rowCount]);
+    let columnIndex = 0;
+    const rows = [];
+    const travel = (columns, current = 0) => {
+      rows[current] = [];
+      columns.forEach((col) => {
+        // todo 修改对象的值，对象改不改变，不太清楚
+        const shallowedCol = { ...col };
+        if (shallowedCol[childrenColumnName]) {
+          shallowedCol.colSpan = getFlattenColumns(
+            shallowedCol[childrenColumnName],
+            childrenColumnName
+          ).length;
+          shallowedCol.$$columnIndex = [columnIndex];
+          rows[current].push(shallowedCol);
+          travel(shallowedCol[childrenColumnName], current + 1);
+          shallowedCol.$$columnIndex.push(columnIndex - 1);
+        } else {
+          shallowedCol.rowSpan = rowCount - current;
+          shallowedCol.$$columnIndex = columnIndex++;
+          rows[current].push(shallowedCol);
+        }
+      });
+      rows[current] = processColumns(rows[current]);
+    };
+    travel(columns);
+    return rows;
+  }, [columns, childrenColumnName, rowCount, processColumns]);
 
   // return
   return [groupColumns, flattenColumns];

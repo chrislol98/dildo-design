@@ -19,9 +19,9 @@ const TBody = (props) => {
 
   const renderChildren = () => {
     if (data.length) {
-      return data.map((record, idx) => {
+      return data.map((record, index) => {
         const rowKey = getRowKey(record);
-        return <Tr {...props} key={rowKey} rowKey={rowKey} record={record} index={idx}></Tr>;
+        return <Tr {...props} key={rowKey} rowKey={rowKey} record={record} index={index}></Tr>;
       });
     } else {
       return (

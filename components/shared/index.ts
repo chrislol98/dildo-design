@@ -115,15 +115,21 @@ export function omit<T extends object, K extends keyof T>(
 /* -----------------utils end------------------ */
 
 /* -----------------is------------------ */
+const opt = Object.prototype.toString;
+
 export function isSyntheticEvent(e: any): boolean {
   return e?.constructor?.name === 'SyntheticEvent' || e?.nativeEvent instanceof Event;
 }
 
 export function isObject(obj: any): obj is { [key: string]: any } {
-  return Object.prototype.toString.call(obj) === '[object Object]';
+  return opt.call(obj) === '[object Object]';
 }
 
 export function isNumber(obj: any): obj is number {
-  return Object.prototype.toString.call(obj) === '[object Number]' && obj === obj;
+  return opt.call(obj) === '[object Number]' && obj === obj;
+}
+
+export function isArray(obj: any): obj is any[] {
+  return opt.call(obj) === '[object Array]';
 }
 /* -----------------is end------------------ */

@@ -5,6 +5,16 @@ const columns = [
   {
     title: 'Name',
     dataIndex: 'name',
+    render: (col, item, index) => {
+      const obj = {
+        children: col,
+        props: {},
+      };
+
+      // obj.props.colSpan = 4;
+
+      return obj;
+    },
     // colSpan: 0,
     sorter: (a, b) => {
       if (a.name > b.name) {
@@ -30,36 +40,33 @@ const columns = [
         value: '18',
       },
     ],
-    defaultFilters: ['18'],
+    // defaultFilters: ['18'],
+    // todo filterMultiple: false,
     onFilter: (value, row) => row.age > value,
   },
   {
     title: 'Score A',
-    dataIndex: 'scoreA',
-    defaultFilters: 'descend',
-    sorter: {
-      compare: (a, b) => a.scoreA - b.scoreA,
-      multiple: 3,
-    },
-  },
-  {
-    title: 'Score B',
-    dataIndex: 'scoreB',
+    children: [
+      {
+        title: 'Score B',
+        dataIndex: 'scoreB',
 
-    defaultSortOrder: 'descend',
-    sorter: {
-      compare: (a, b) => a.scoreB - b.scoreB,
-      multiple: 2,
-    },
-  },
-  {
-    title: 'Score C',
-    dataIndex: 'scoreC',
-    defaultSortOrder: 'descend',
-    sorter: {
-      compare: (a, b) => a.scoreC - b.scoreC,
-      multiple: 1,
-    },
+        defaultSortOrder: 'descend',
+        sorter: {
+          compare: (a, b) => a.scoreB - b.scoreB,
+          multiple: 2,
+        },
+      },
+      {
+        title: 'Score C',
+        dataIndex: 'scoreC',
+        defaultSortOrder: 'descend',
+        sorter: {
+          compare: (a, b) => a.scoreC - b.scoreC,
+          multiple: 1,
+        },
+      },
+    ],
   },
 ];
 const data = [
@@ -67,7 +74,7 @@ const data = [
     key: '1',
     name: 'A',
     age: 18,
-    scoreA: 100,
+
     scoreB: 60,
     scoreC: 70,
   },
@@ -75,7 +82,7 @@ const data = [
     key: '2',
     name: 'B',
     age: 17,
-    scoreA: 100,
+
     scoreB: 90,
     scoreC: 80,
   },
@@ -83,7 +90,7 @@ const data = [
     key: '3',
     name: 'C',
     age: 19,
-    scoreA: 100,
+
     scoreB: 70,
     scoreC: 60,
   },
@@ -91,7 +98,7 @@ const data = [
     key: '4',
     name: 'D',
     age: 15,
-    scoreA: 80,
+
     scoreB: 70,
     scoreC: 100,
   },
@@ -99,7 +106,7 @@ const data = [
     key: '5',
     name: 'E',
     age: 20,
-    scoreA: 80,
+
     scoreB: 70,
     scoreC: 90,
   },
