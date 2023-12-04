@@ -1,0 +1,1 @@
+export { default as alignCenter } from './react-icon/alignCenter/index';
