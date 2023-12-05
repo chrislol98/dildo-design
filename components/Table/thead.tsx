@@ -13,20 +13,6 @@ const THead = (props) => {
       return (
         <ComponentHeaderRow key={index}>
           {row.map((column, colIndex) => {
-            if (column.$$isOperation) {
-              let node;
-              if (column.title === INTERNAL_EXPAND_KEY) {
-                node = headerOperations.find((o) => o.name === 'expandNode')?.node;
-              }
-              return React.cloneElement(node, {
-                key: column.key,
-                className: '',
-                ...column,
-                style: {
-                  width: column.width,
-                },
-              });
-            }
             return (
               <Th
                 {...thProps}
