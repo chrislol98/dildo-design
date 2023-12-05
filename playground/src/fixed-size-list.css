@@ -9,7 +9,7 @@
     justify-content: center;
 }
 .ListItemOdd {
-    background-color: green;
+    background-color: rgb(245, 245, 245);
 }
 .ListItemEven {
     background-color: red;

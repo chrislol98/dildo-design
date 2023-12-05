@@ -1,74 +1,89 @@
 import React from 'react';
-function throttle(fn, delay = 500) {
-  let oldTime = Date.now();
-  return function (...args) {
-    let newTime = Date.now();
-    if (newTime - oldTime >= delay) {
-      fn.apply(null, args);
-      oldTime = Date.now();
+const IS_SCROLLING_DEBOUNCE_INTERVAL = 150;
+class ListItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.domRef = React.createRef();
+    this.resizeObserver = null;
+  }
+  componentDidMount() {
+    if (this.domRef.current) {
+      const node = this.domRef.current.firstChild;
+      const { index, onSizeChange } = this.props;
+      this.resizeObserver = new ResizeObserver(() => {
+        onSizeChange(index, node);
+      });
+      this.resizeObserver.observe(node);
     }
-  };
-}
-
-function debounce(func, wait) {
-  let timeout;
-  return function () {
-    let context = this; // 保存this指向
-    let args = arguments; // 拿到event对象
-
-    clearTimeout(timeout);
-    timeout = setTimeout(function () {
-      func.apply(context, args);
-    }, wait);
-  };
+  }
+  componentWillUnmount() {
+    if (this.resizeObserver && this.domRef.current.firstChild) {
+      this.resizeObserver.unobserve(this.domRef.current.firstChild);
+    }
+  }
+  render() {
+    const { index, style, ComponentType } = this.props;
+    return (
+      <div style={style} ref={this.domRef} >
+        <ComponentType index={index}/>
+      </div>
+    );
+  }
 }
 export default function createListComponent({
-  getEstimatedTotalSize,
-  getItemSize,
-  getItemOffset,
-  getStartIndexForOffset, //根据向上卷去的高度计算开始索引
-  getStopIndexForStartIndex, //根据开始索引和容器的高度计算结束索引
+  getEstimatedTotalSize, //获取预计的总高度
+  getItemSize, //每个条目的高度
+  getItemOffset, //获取每个条目的偏移量
+  getStartIndexForOffset,
+  getStopIndexForStartIndex,
   initInstanceProps,
+  getOffsetForIndex,
 }) {
   return class _ extends React.Component {
-    constructor(props) {
-      super(props);
-      this.instanceProps = initInstanceProps && initInstanceProps(this.props);
-      this.state = { scrollOffset: 0 };
-      this.outerRef = React.createRef();
-      this.oldFirstRef = React.createRef();
-      this.oldLastRef = React.createRef();
-      this.firstRef = React.createRef();
-      this.lastRef = React.createRef();
-    }
+    outerRef = React.createRef();
+    itemStyleCache = new Map();
+    instanceProps = initInstanceProps && initInstanceProps(this.props);
     static defaultProps = {
-      overscanCount: 2,
+      overscanCount: 3,
+      useIsScrolling: false,
     };
-    componentDidMount() {
-      this.observe((this.oldFirstRef.current = this.firstRef.current));
-      this.observe((this.oldLastRef.current = this.lastRef.current));
-    }
+    scrollTo = (scrollOffset) => {
+      this.setState({ scrollOffset: Math.max(0, scrollOffset) });
+    };
+    scrollToItem = (index) => {
+      const { itemCount } = this.props;
+      index = Math.max(0, Math.min(index, itemCount - 1));
+      this.scrollTo(getOffsetForIndex(this.props, index));
+    };
     componentDidUpdate() {
-      if (this.oldFirstRef.current !== this.firstRef.current) {
-        this.oldFirstRef.current = this.firstRef.current;
-        this.observe(this.firstRef.current);
-      }
-      if (this.oldLastRef.current !== this.lastRef.current) {
-        this.oldLastRef.current = this.lastRef.current;
-        this.observe(this.lastRef.current);
-      }
+      const { scrollOffset } = this.state;
+      this.outerRef.current.scrollTop = scrollOffset;
     }
-    observe = (dom) => {
-      let io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach(this.onScroll);
-        },
-        { root: this.outerRef.current }
-      );
-      io.observe(dom);
+    state = { scrollOffset: 0, isScrolling: false };
+    onSizeChange = (index, node) => {
+      const height = node.offsetHeight;
+      const { itemMetadataMap, lastMeasuredIndex } = this.instanceProps;
+      const itemMetadata = itemMetadataMap[index];
+      itemMetadata.size = height;
+      let offset = 0;
+      for (let i = 0; i <= lastMeasuredIndex; i++) {
+        const itemMetadata = itemMetadataMap[i];
+        itemMetadata.offset = offset;
+        offset = offset + itemMetadata.size;
+      }
+      this.itemStyleCache.clear();
+      this.forceUpdate();
     };
     render() {
-      const { width, height, children: Row } = this.props;
+      const {
+        width,
+        height,
+        itemCount,
+        children: ComponentType,
+        isDynamic,
+        useIsScrolling,
+      } = this.props;
+      const { isScrolling } = this.state;
       const containerStyle = {
         position: 'relative',
         width,
@@ -77,37 +92,100 @@ export default function createListComponent({
         willChange: 'transform',
       };
       const contentStyle = {
-        width: '100%',
         height: getEstimatedTotalSize(this.props, this.instanceProps),
+        width: '100%',
       };
       const items = [];
-      const [startIndex, stopIndex, originStartIndex, originStopIndex] = this.getRangeToRender();
-      for (let index = startIndex; index <= stopIndex; index++) {
-        const style = this.getItemStyle(index);
-        if (index === originStartIndex) {
-          items.push(<Row key={index} index={index} style={style} forwardRef={this.firstRef} />);
-          continue;
-        } else if (index === originStopIndex) {
-          items.push(<Row key={index} index={index} style={style} forwardRef={this.lastRef} />);
-          continue;
+      if (itemCount > 0) {
+        const [startIndex, stopIndex] = this._getRangeToRender();
+        for (let index = startIndex; index <= stopIndex; index++) {
+          if (isDynamic) {
+            items.push(
+              <ListItem
+                key={index}
+                index={index}
+                style={this._getItemStyle(index)}
+                ComponentType={ComponentType}
+                onSizeChange={this.onSizeChange}
+                isScrolling={useIsScrolling && isScrolling}
+              />
+            );
+          } else {
+            items.push(
+              <ComponentType
+                key={index}
+                index={index}
+                style={this._getItemStyle(index)}
+                isScrolling={useIsScrolling && isScrolling}
+              />
+            );
+          }
         }
-        items.push(<Row key={index} index={index} style={style} />);
       }
       return (
-        <div style={containerStyle} ref={this.outerRef}>
+        <div style={containerStyle} onScroll={this.handleOnScroll} ref={this.outerRef}>
           <div style={contentStyle}>{items}</div>
         </div>
       );
     }
-    // onScroll = debounce(() => {
-    //   const { scrollTop } = this.outerRef.current;
-    //   this.setState({ scrollOffset: scrollTop });
-    // });
-    onScroll = () => {
-      const { scrollTop } = this.outerRef.current;
-      this.setState({ scrollOffset: scrollTop });
+    handleOnScroll = (event) => {
+      const currentTarget = event.currentTarget;
+      this.onScroll(currentTarget);
     };
-    getRangeToRender = () => {
+    onScroll = (currentTarget) => {
+      const { scrollTop } = currentTarget;
+      this.setState(
+        { scrollOffset: scrollTop, isScrolling: true },
+        this._resetIsScrollingDebounced
+      );
+    };
+
+    _resetIsScrollingDebounced = () => {
+      if (this._resetIsScrollingTimeoutId) {
+        clearTimeout(this._resetIsScrollingTimeoutId);
+      }
+      this._resetIsScrollingTimeoutId = setTimeout(
+        this._resetIsScrolling,
+        IS_SCROLLING_DEBOUNCE_INTERVAL
+      );
+    };
+
+    debounce(fn, wait = 50) {
+      // 通过闭包缓存一个定时器 id
+      let timer = null;
+      // 将 debounce 处理结果当作函数返回
+      // 触发事件回调时执行这个返回函数
+      return function (...args) {
+        // this保存给context
+        // 如果已经设定过定时器就清空上一次的定时器
+        if (timer) clearTimeout(timer);
+
+        // 开始设定一个新的定时器，定时器结束后执行传入的函数 fn
+        timer = setTimeout(() => {
+          fn(...args);
+        }, wait);
+      };
+    }
+    _resetIsScrolling = () => {
+      this._resetIsScrollingTimeoutId = null;
+      this.setState({ isScrolling: false });
+    };
+    _getItemStyle = (index) => {
+      let style;
+      if (this.itemStyleCache.has(index)) {
+        style = this.itemStyleCache.get(index);
+      } else {
+        style = {
+          position: 'absolute',
+          width: '100%',
+          height: getItemSize(this.props, index, this.instanceProps),
+          top: getItemOffset(this.props, index, this.instanceProps),
+        };
+        this.itemStyleCache.set(index, style);
+      }
+      return style;
+    };
+    _getRangeToRender = () => {
       const { scrollOffset } = this.state;
       const { itemCount, overscanCount } = this.props;
       const startIndex = getStartIndexForOffset(this.props, scrollOffset, this.instanceProps);
@@ -119,96 +197,10 @@ export default function createListComponent({
       );
       return [
         Math.max(0, startIndex - overscanCount),
-        Math.min(itemCount - 1, stopIndex + overscanCount),
+        Math.max(0, Math.min(itemCount - 1, stopIndex + overscanCount)),
         startIndex,
         stopIndex,
       ];
     };
-    getItemStyle = (index) => {
-      const style = {
-        position: 'absolute',
-        width: '100%',
-        height: getItemSize(this.props, index, this.instanceProps),
-        top: getItemOffset(this.props, index, this.instanceProps),
-      };
-      return style;
-    };
   };
 }
-
-// import React from 'react';
-// export default function createListComponent({
-//   getEstimatedTotalSize,
-//   getItemSize,
-//   getItemOffset,
-//   getStartIndexForOffset, //根据向上卷去的高度计算开始索引
-//   getStopIndexForStartIndex, //根据开始索引和容器的高度计算结束索引
-//   initInstanceProps,
-// }) {
-//   return class _ extends React.Component {
-//     constructor(props) {
-//       super(props);
-//       this.instanceProps = initInstanceProps && initInstanceProps(this.props);
-//       this.state = { scrollOffset: 0 };
-//     }
-//     static defaultProps = {
-//       overscanCount: 2,
-//     };
-
-//     render() {
-//       const { width, height, children: Row } = this.props;
-//       const containerStyle = {
-//         position: 'relative',
-//         width,
-//         height,
-//         overflow: 'auto',
-//         willChange: 'transform',
-//       };
-//       const contentStyle = {
-//         width: '100%',
-//         height: getEstimatedTotalSize(this.props, this.instanceProps),
-//       };
-//       const items = [];
-//       const [startIndex, stopIndex] = this.getRangeToRender();
-//       for (let index = startIndex; index <= stopIndex; index++) {
-//         const style = this.getItemStyle(index);
-//         items.push(<Row key={index} index={index} style={style} />);
-//       }
-//       return (
-//         <div style={containerStyle} onScroll={this.onScroll}>
-//           <div style={contentStyle}>{items}</div>
-//         </div>
-//       );
-//     }
-//     onScroll = (event) => {
-//       const { scrollTop } = event.currentTarget;
-//       this.setState({ scrollOffset: scrollTop });
-//     };
-//     getRangeToRender = () => {
-//       const { scrollOffset } = this.state;
-//       const { itemCount, overscanCount } = this.props;
-//       const startIndex = getStartIndexForOffset(this.props, scrollOffset, this.instanceProps);
-//       const stopIndex = getStopIndexForStartIndex(
-//         this.props,
-//         startIndex,
-//         scrollOffset,
-//         this.instanceProps
-//       );
-//       return [
-//         Math.max(0, startIndex - overscanCount),
-//         Math.min(itemCount - 1, stopIndex + overscanCount),
-//         startIndex,
-//         stopIndex,
-//       ];
-//     };
-//     getItemStyle = (index) => {
-//       const style = {
-//         position: 'absolute',
-//         width: '100%',
-//         height: getItemSize(this.props, index, this.instanceProps),
-//         top: getItemOffset(this.props, index, this.instanceProps),
-//       };
-//       return style;
-//     };
-//   };
-// }

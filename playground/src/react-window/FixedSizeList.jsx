@@ -9,5 +9,9 @@ const FixedSizeList = createListComponent({
     const numVisibleItems = Math.ceil(height / itemSize);
     return startIndex + numVisibleItems - 1;
   },
+  getOffsetForIndex: (props, index) => {
+    const { itemSize } = props;
+    return itemSize * index;
+  },
 });
 export default FixedSizeList;

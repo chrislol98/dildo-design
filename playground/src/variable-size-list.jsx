@@ -6,7 +6,7 @@ const rowSizes = new Array(1000).fill(true).map(() => 25 + Math.round(Math.rando
 const getItemSize = (index) => rowSizes[index];
 
 const Row = ({ index, style, forwardRef }) => (
-  <div className={index % 2 ? 'ListItemOdd' : 'ListItemEven'} style={style} ref={forwardRef}>
+  <div className={index % 2 ? 'ListItemOdd' : 'ListItemEven'} style={style}>
     Row {index}
   </div>
 );
