@@ -1,21 +1,71 @@
 import * as React from 'react';
+import { INTERNAL_EXPAND_KEY, INTERNAL_SELECTION_KEY } from './constant';
+import useComponent from './useComponent';
 
 export default function useColumns(props) {
   // value
-  const { columns = [], childrenColumnName } = props;
-  // hooks ============================================
-  const processColumns = React.useCallback((rows) => {
-    const _rows = [];
-    rows.forEach((row, idx) => {
-      const _row = { ...row, key: row.dataIndex || idx };
-      _rows.push(_row);
-    });
-    return _rows;
-  }, []);
+  const {
+    columns = [],
+    childrenColumnName,
+    expandedRowRender,
+    expandProps = {},
+    components,
+  } = props;
+  const shouldRenderExpandCol = !!expandedRowRender;
+  const shouldRenderSelectionCol = false;
+  const { width: expandColWidth } = expandProps;
+  // hooks
+  const { getHeaderComponentOperations, getBodyComponentOperations } = useComponent(components);
+  const headerOperations = React.useMemo(
+    () =>
+      getHeaderComponentOperations({
+        selectionNode: shouldRenderSelectionCol ? 'holder_node' : '',
+        expandNode: shouldRenderExpandCol ? 'holder_node' : '',
+      }),
+    [shouldRenderSelectionCol, shouldRenderExpandCol, getHeaderComponentOperations]
+  );
+  const bodyOperations = React.useMemo(
+    () =>
+      getBodyComponentOperations({
+        selectionNode: shouldRenderSelectionCol ? 'holder_node' : '',
+        expandNode: shouldRenderExpandCol ? 'holder_node' : '',
+      }),
+    [shouldRenderSelectionCol, shouldRenderExpandCol, getBodyComponentOperations]
+  );
+  const processColumns = React.useCallback(
+    (rows, operations, index, rowSpan = undefined) => {
+      const _rows = [];
+      rows.forEach((row, idx) => {
+        const _row = { ...row, key: row.dataIndex || idx };
+        _rows.push(_row);
+      });
+      const expandColumn = shouldRenderExpandCol && {
+        key: INTERNAL_EXPAND_KEY,
+        title: INTERNAL_EXPAND_KEY,
+        width: expandColWidth,
+        $$isOperation: true,
+      };
+
+      if (!index) {
+        operations.forEach((operation, i) => {
+          if (operation.node) {
+            const columnIndex = -1;
+            _rows.unshift({
+              ...expandColumn,
+              $$columnIndex: columnIndex,
+              rowSpan,
+            });
+          }
+        });
+      }
+      return _rows;
+    },
+    [shouldRenderExpandCol, expandColWidth]
+  );
 
   const flattenColumns = React.useMemo(
-    () => processColumns(getFlattenColumns(columns, childrenColumnName)),
-    [columns, childrenColumnName]
+    () => processColumns(getFlattenColumns(columns, childrenColumnName), bodyOperations, 0),
+    [columns, childrenColumnName, bodyOperations]
   );
 
   const rowCount = React.useMemo(
@@ -30,8 +80,9 @@ export default function useColumns(props) {
           ...col,
         };
       });
-      return [processColumns(rows)];
+      return [processColumns(rows, headerOperations, 0)];
     }
+
     let columnIndex = 0;
     const rows = [];
     const travel = (columns, current = 0) => {
@@ -54,7 +105,7 @@ export default function useColumns(props) {
           rows[current].push(shallowedCol);
         }
       });
-      rows[current] = processColumns(rows[current]);
+      rows[current] = processColumns(rows[current], headerOperations, current, rowCount - current);
     };
     travel(columns);
     return rows;

@@ -114,7 +114,13 @@ const data = [
 const App = () => {
   return (
     <div>
-      <Table columns={columns} data={data} />
+      <Table
+        columns={columns}
+        data={data}
+        expandedRowRender={(record) => {
+          return `This is No.${record.key} description.`;
+        }}
+      />
     </div>
   );
 };

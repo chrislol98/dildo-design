@@ -3,7 +3,8 @@ export { default as useComponent } from './useComponent';
 export { default as useColumns } from './useColumns';
 export { default as useSorter } from './useSorter';
 export { default as useFilter } from './useFilter';
-
+export { default as useExpand } from './useExpand';
+export * from './constant';
 export function getSorterPriority(sorter) {
   if (typeof sorter === 'object' && typeof sorter.multiple === 'number') {
     return sorter.multiple;
@@ -41,4 +42,8 @@ export function getOriginData(data) {
   //   return d.__ORIGIN_DATA;
   // });
   return data;
+}
+
+export function isChildrenNotEmpty(record, field: string) {
+  return isArray(record[field]) && record[field].length;
 }

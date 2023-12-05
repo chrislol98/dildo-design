@@ -1,10 +1,12 @@
 import { useComponent } from './shared';
-import * as React from 'react';
+
 import Th from './th';
 const THead = (props) => {
   const { components, groupColumns, onSort, onFilter, activeSorters, filters } = props;
-  const { ComponentThead, ComponentHeaderRow, getHeaderComponentOperations } =
-    useComponent(components);
+  const thProps = {
+    ...props,
+  };
+  const { ComponentThead, ComponentHeaderRow } = useComponent(components);
 
   const renderChildren = () => {
     return groupColumns.map((row, index) => {
@@ -13,6 +15,7 @@ const THead = (props) => {
           {row.map((column, colIndex) => {
             return (
               <Th
+                {...thProps}
                 key={column.key}
                 _key={column.key}
                 filter={filters[column.key]}

@@ -1,5 +1,6 @@
-import { useComponent } from './shared';
+import { useComponent, INTERNAL_EXPAND_KEY } from './shared';
 import * as React from 'react';
+
 import Td from './td';
 const Th = (props, ref) => {
   const {
@@ -9,20 +10,39 @@ const Th = (props, ref) => {
     _key,
     onSort,
     sorter,
+    expandProps = {},
     filter,
     onFilter,
-    filterDropdown,
-    onFilterDropdownVisibleChange,
+    expandedRowRender,
   } = props;
+  const { columnTitle } = expandProps;
+
   const thProps: Record<PropertyKey, any> = { colSpan, rowSpan };
-  console.log(thProps, 'thProps');
-  const { ComponentTh, ComponentHeaderCell } = useComponent(components);
+  const { ComponentTh, ComponentHeaderCell, getHeaderComponentOperations } =
+    useComponent(components);
+  const expandNode = expandedRowRender && <th>{columnTitle && <div>{columnTitle}</div>}</th>;
+  const selectionNode = <div></div>;
+  const headerOperations = getHeaderComponentOperations({ selectionNode, expandNode });
   const renderChildren = () => {
     return title;
   };
 
   const renderTh = () => {
     if (colSpan !== 0) {
+      if (column.$$isOperation) {
+        let node;
+        if (column.title === INTERNAL_EXPAND_KEY) {
+          node = headerOperations.find((o) => o.name === 'expandNode')?.node;
+        }
+        return React.cloneElement(node, {
+          ...column,
+          key: column.key,
+          className: '',
+          style: {
+            width: column.width,
+          },
+        });
+      }
       return (
         <ComponentTh {...thProps}>
           <ComponentHeaderCell>

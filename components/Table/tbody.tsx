@@ -1,27 +1,42 @@
-import { useComponent } from './shared';
+import { useComponent, getOriginData } from './shared';
 import * as React from 'react';
 import Tr from './tr';
 const TBody = (props) => {
   // value
-  const { columns = [], data = [], components, rowKey } = props;
+  const {
+    columns = [],
+    data = [],
+    components,
+    rowKey,
+    getRowKey,
+    expandProps = {},
+    expandedRowRender,
+    expandedRowKeys = [],
+  } = props;
+  const enhancedExpandedRowRender = (r, i) => expandedRowRender(getOriginData(r), i);
+  const isRowExpandable = function (record, index) {
+    if ('rowExpandable' in expandProps && typeof expandProps.rowExpandable === 'function') {
+      return expandProps.rowExpandable(record);
+    }
+    return enhancedExpandedRowRender && enhancedExpandedRowRender(record, index) !== null;
+  };
+  const trProps = {
+    ...props,
+    isRowExpandable,
+  };
   const { ComponentTbody } = useComponent(components);
 
-  // handleEffect
-  const getRowKey = React.useMemo(() => {
-    if (typeof rowKey === 'function') {
-      return (record) => rowKey(record);
-    } else {
-      return (record) => record[rowKey];
-    }
-  }, [rowKey]);
-
   // render
-
   const renderChildren = () => {
     if (data.length) {
       return data.map((record, index) => {
         const rowKey = getRowKey(record);
-        return <Tr {...props} key={rowKey} rowKey={rowKey} record={record} index={index}></Tr>;
+        return (
+          <React.Fragment key={rowKey}>
+            <Tr {...trProps} key={rowKey} index={index} rowKey={rowKey} record={record}></Tr>
+            {renderExpand(record, index)}
+          </React.Fragment>
+        );
       });
     } else {
       return (
@@ -34,6 +49,17 @@ const TBody = (props) => {
     }
   };
 
+  const renderExpand = (record, index) => {
+    const rowKey = getRowKey(record);
+    const shouldRenderExpand = isRowExpandable(record, index) && expandedRowKeys.includes(rowKey);
+    return shouldRenderExpand ? (
+      <tr>
+        <td>{enhancedExpandedRowRender?.(record, index)}</td>
+      </tr>
+    ) : (
+      false
+    );
+  };
   return <ComponentTbody>{renderChildren()}</ComponentTbody>;
 };
 
