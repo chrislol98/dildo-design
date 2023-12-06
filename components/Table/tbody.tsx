@@ -7,7 +7,6 @@ const TBody = (props) => {
     columns = [],
     data = [],
     components,
-    rowKey,
     getRowKey,
     expandProps = {},
     expandedRowRender,
@@ -54,7 +53,7 @@ const TBody = (props) => {
     const shouldRenderExpand = isRowExpandable(record, index) && expandedRowKeys.includes(rowKey);
     return shouldRenderExpand ? (
       <tr>
-        <td>{enhancedExpandedRowRender?.(record, index)}</td>
+        <td colSpan={columns.length}>{enhancedExpandedRowRender?.(record, index)}</td>
       </tr>
     ) : (
       false

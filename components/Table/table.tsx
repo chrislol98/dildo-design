@@ -2,7 +2,7 @@ import * as React from 'react';
 import TBody from './tbody';
 import THead from './thead';
 import ColGroup from './colgroup';
-import { useComponent, useColumns, useSorter, useFilter, useExpand } from './shared';
+import { useComponent, useSelection, useColumns, useSorter, useFilter, useExpand } from './shared';
 import { useMergeProps } from '../shared';
 
 function getPageData(data) {
@@ -27,15 +27,27 @@ const Table = function (props, ref) {
   const { ComponentTable } = useComponent(components);
   const [groupColumns, flattenColumns] = useColumns(props);
   const [sortedData, activeSorters, onSort] = useSorter(data, flattenColumns, childrenColumnName);
-  const [sortedAndFilteredData, filters, onFilter] = useFilter(sortedData, flattenColumns);
-  const [expandedRowKeys, onClickExpandBtn] = useExpand(props, sortedAndFilteredData, getRowKey);
-  const progressedData = getPageData(sortedAndFilteredData);
-
+  const [sortedFilteredData, filters, onFilter] = useFilter(sortedData, flattenColumns);
+  const pagedSortedFilteredData = getPageData(sortedFilteredData);
+  const {
+    selectedRowKeys,
+    indeterminateKeys,
+    onCheckAll,
+    onCheck,
+    setSelectedRowKeys,
+    allSelectedRowKeys,
+    flattenData,
+  } = useSelection(props, pagedSortedFilteredData, sortedFilteredData, getRowKey);
+  const [expandedRowKeys, onClickExpandBtn] = useExpand(props, flattenData, getRowKey);
   const renderThead = () => {
     const thead = (
       <THead
         {...props}
-        data={progressedData}
+        getRowKey={getRowKey}
+        onCheckAll={onCheckAll}
+        data={pagedSortedFilteredData}
+        allSelectedRowKeys={allSelectedRowKeys}
+        selectedRowKeys={selectedRowKeys}
         groupColumns={groupColumns}
         onSort={onSort}
         onFilter={onFilter}
@@ -49,10 +61,12 @@ const Table = function (props, ref) {
     const tbody = (
       <TBody
         {...props}
-        data={progressedData}
+        selectedRowKeys={selectedRowKeys}
+        data={pagedSortedFilteredData}
         expandedRowKeys={expandedRowKeys}
         columns={flattenColumns}
         getRowKey={getRowKey}
+        onCheck={onCheck}
         onClickExpandBtn={onClickExpandBtn}
       />
     );

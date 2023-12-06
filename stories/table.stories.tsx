@@ -120,6 +120,7 @@ const App = () => {
         expandedRowRender={(record) => {
           return `This is No.${record.key} description.`;
         }}
+        rowSelection={{}}
       />
     </div>
   );

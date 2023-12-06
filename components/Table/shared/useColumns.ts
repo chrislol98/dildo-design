@@ -10,10 +10,12 @@ export default function useColumns(props) {
     expandedRowRender,
     expandProps = {},
     components,
+    rowSelection,
   } = props;
   const shouldRenderExpandCol = !!expandedRowRender;
-  const shouldRenderSelectionCol = false;
+  const shouldRenderSelectionCol = rowSelection;
   const { width: expandColWidth } = expandProps;
+  const { columnWidth: selectionColumnWidth } = rowSelection;
   // hooks
   const { getHeaderComponentOperations, getBodyComponentOperations } = useComponent(components);
   const headerOperations = React.useMemo(
@@ -45,16 +47,30 @@ export default function useColumns(props) {
         width: expandColWidth,
         $$isOperation: true,
       };
+      const selectionColumn = shouldRenderSelectionCol && {
+        key: INTERNAL_SELECTION_KEY,
+        title: INTERNAL_SELECTION_KEY,
+        width: selectionColumnWidth,
+        $$isOperation: true,
+      };
 
       if (!index) {
         operations.forEach((operation, i) => {
           if (operation.node) {
-            const columnIndex = -1;
-            _rows.unshift({
-              ...expandColumn,
-              $$columnIndex: columnIndex,
-              rowSpan,
-            });
+            const columnIndex = headerOperations.filter((opt) => opt.node).length - i - 1;
+            if (operation.name === 'expandNode') {
+              _rows.unshift({
+                ...expandColumn,
+                $$columnIndex: columnIndex,
+                rowSpan,
+              });
+            } else if (operation.name === 'selectionNode') {
+              _rows.unshift({
+                ...selectionColumn,
+                $$columnIndex: columnIndex,
+                rowSpan,
+              });
+            }
           }
         });
       }

@@ -1,5 +1,6 @@
 import { useComponent } from './shared';
 
+
 import Th from './th';
 const THead = (props) => {
   const { components, groupColumns, onSort, onFilter, activeSorters, filters } = props;

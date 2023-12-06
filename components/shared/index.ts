@@ -132,5 +132,12 @@ export function isNumber(obj: any): obj is number {
 export function isArray(obj: any): obj is any[] {
   return opt.call(obj) === '[object Array]';
 }
-/* -----------------is end------------------ */
 
+export function isUndefined(obj: any): obj is undefined {
+  return obj === undefined;
+}
+
+export function isNull(obj: any): obj is null {
+  return obj === null;
+}
+/* -----------------is end------------------ */
