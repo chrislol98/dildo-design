@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { getOriginData, isChildrenNotEmpty } from '.';
-export default function useExpand(props, data, getRowKey) {
+import { getOriginData, isChildrenNotEmpty, getRowKey } from '.';
+export default function useExpand(props, data) {
   const {
     defaultExpandedRowKeys,
     defaultExpandAllRows,
     expandedRowRender,
     onExpand,
     onExpandedRowsChange,
+    rowKey,
     childrenColumnName = 'children',
     expandProps,
   } = props;
@@ -25,13 +26,12 @@ export default function useExpand(props, data, getRowKey) {
             'rowExpandable' in expandProps &&
             typeof expandProps.rowExpandable === 'function'
           ) {
-            return expandProps.rowExpandable(originItem) && getRowKey(item);
+            return expandProps.rowExpandable(originItem) && getRowKey(item, rowKey);
           }
           if (typeof expandedRowRender === 'function') {
-            return expandedRowRender(originItem, i) && getRowKey(item);
+            return expandedRowRender(originItem, i) && getRowKey(item, rowKey);
           }
-          // todo 未实现
-          return isChildrenNotEmpty(item, childrenColumnName) && getRowKey(item);
+          return isChildrenNotEmpty(item, childrenColumnName) && getRowKey(item, rowKey);
         })
         .filter((x) => x);
     }
@@ -47,8 +47,8 @@ export default function useExpand(props, data, getRowKey) {
         : mergedExpandedRowKeys.filter((_k) => key !== _k);
 
       const sortedExpandedRowKeys = data
-        .filter((record) => newExpandedRowKeys.indexOf(getRowKey(record)) !== -1)
-        .map((record) => getRowKey(record));
+        .filter((record) => newExpandedRowKeys.indexOf(getRowKey(record, rowKey)) !== -1)
+        .map((record) => getRowKey(record, rowKey));
       setExpandedRowKeys(sortedExpandedRowKeys);
     },
     // 不懂 setExpandedRowKeys 是不是新函数，要不要加

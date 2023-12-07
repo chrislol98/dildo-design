@@ -2,7 +2,15 @@ import * as React from 'react';
 import TBody from './tbody';
 import THead from './thead';
 import ColGroup from './colgroup';
-import { useComponent, useSelection, useColumns, useSorter, useFilter, useExpand } from './shared';
+import {
+  useComponent,
+  useSelection,
+  useColumns,
+  useSorter,
+  useFilter,
+  useExpand,
+  getRowKey,
+} from './shared';
 import { useMergeProps } from '../shared';
 
 function getPageData(data) {
@@ -12,18 +20,12 @@ function getPageData(data) {
 const defaultProps = {
   rowKey: 'key',
   childrenColumnName: 'children',
+  indentSize: 16,
 };
 
 const Table = function (props, ref) {
   props = useMergeProps(props, defaultProps, {});
   const { components, data = [], childrenColumnName, rowKey } = props;
-  const getRowKey = React.useMemo(() => {
-    if (typeof rowKey === 'function') {
-      return (record) => rowKey(record);
-    } else {
-      return (record) => record[rowKey];
-    }
-  }, [rowKey]);
   const { ComponentTable } = useComponent(components);
   const [groupColumns, flattenColumns] = useColumns(props);
   const [sortedData, activeSorters, onSort] = useSorter(data, flattenColumns, childrenColumnName);
@@ -37,8 +39,8 @@ const Table = function (props, ref) {
     setSelectedRowKeys,
     allSelectedRowKeys,
     flattenData,
-  } = useSelection(props, pagedSortedFilteredData, sortedFilteredData, getRowKey);
-  const [expandedRowKeys, onClickExpandBtn] = useExpand(props, flattenData, getRowKey);
+  } = useSelection(props, pagedSortedFilteredData, sortedFilteredData);
+  const [expandedRowKeys, onClickExpandBtn] = useExpand(props, flattenData);
   const renderThead = () => {
     const thead = (
       <THead
@@ -62,6 +64,7 @@ const Table = function (props, ref) {
       <TBody
         {...props}
         selectedRowKeys={selectedRowKeys}
+        indeterminateKeys={indeterminateKeys}
         data={pagedSortedFilteredData}
         expandedRowKeys={expandedRowKeys}
         columns={flattenColumns}

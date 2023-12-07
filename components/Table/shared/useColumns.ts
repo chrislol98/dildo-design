@@ -39,6 +39,11 @@ export default function useColumns(props) {
       const _rows = [];
       rows.forEach((row, idx) => {
         const _row = { ...row, key: row.dataIndex || idx };
+        if (idx === 0) {
+          _row.$$isFirstColumn = true;
+        } else {
+          _row.$$isFirstColumn = false;
+        }
         _rows.push(_row);
       });
       const expandColumn = shouldRenderExpandCol && {

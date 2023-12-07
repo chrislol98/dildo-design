@@ -54,7 +54,7 @@ export function getSelectedKeys(
   checked,
   checkedRowKeys = [],
   _indeterminateKeys = [],
-  getRowKey,
+  rowKey,
   childrenColumnName,
   checkConnected
 ) {
@@ -63,10 +63,10 @@ export function getSelectedKeys(
 
   function loop(record) {
     if (checked) {
-      selectedRowKeys.add(getRowKey(record));
-      indeterminateKeys.delete(getRowKey(record));
+      selectedRowKeys.add(getRowKey(record, rowKey));
+      indeterminateKeys.delete(getRowKey(record, rowKey));
     } else {
-      selectedRowKeys.delete(getRowKey(record));
+      selectedRowKeys.delete(getRowKey(record, rowKey));
     }
     if (isArray(record[childrenColumnName])) {
       record[childrenColumnName].forEach((child) => {
@@ -77,9 +77,9 @@ export function getSelectedKeys(
 
   if (!checkConnected) {
     if (checked) {
-      selectedRowKeys.add(getRowKey(record));
+      selectedRowKeys.add(getRowKey(record, rowKey));
     } else {
-      selectedRowKeys.delete(getRowKey(record));
+      selectedRowKeys.delete(getRowKey(record, rowKey));
     }
   } else {
     loop(record);
@@ -96,7 +96,7 @@ export function getSelectedKeys(
 export function getSelectedKeysByData(
   flattenData,
   checkedKeys = [],
-  getRowKey,
+  rowKey,
   childrenColumnName: string,
   checkConnected: boolean
 ) {
@@ -110,8 +110,8 @@ export function getSelectedKeysByData(
   const indeterminateKeys = new Set([]);
 
   function loop(record) {
-    selectedRowKeys.add(getRowKey(record));
-    indeterminateKeys.delete(getRowKey(record));
+    selectedRowKeys.add(getRowKey(record, rowKey));
+    indeterminateKeys.delete(getRowKey(record, rowKey));
 
     if (isArray(record[childrenColumnName])) {
       record[childrenColumnName].forEach((child) => {
@@ -121,10 +121,10 @@ export function getSelectedKeysByData(
   }
 
   checkedKeys.forEach((key) => {
-    const record = flattenData.find((d) => getRowKey(d) === key);
+    const record = flattenData.find((d) => getRowKey(d, rowKey) === key);
     if (!isUndefined(record) && !isNull(record)) {
       loop(record);
-      updateParent(record, selectedRowKeys, indeterminateKeys, getRowKey, childrenColumnName);
+      updateParent(record, selectedRowKeys, indeterminateKeys, rowKey, childrenColumnName);
     }
   });
 
@@ -138,20 +138,20 @@ function updateParent(
   record,
   selectedKeys: Set<React.Key>,
   indeterminateKeys: Set<React.Key>,
-  getRowKey,
+  rowKey,
   childrenColumnName: string
 ) {
   if (record.__INTERNAL_PARENT) {
-    const parentKey = getRowKey(record.__INTERNAL_PARENT);
+    const parentKey = getRowKey(record.__INTERNAL_PARENT, rowKey);
     if (isArray(record.__INTERNAL_PARENT[childrenColumnName])) {
       const total = record.__INTERNAL_PARENT[childrenColumnName].length;
       let len = 0;
       let flag = false;
       record.__INTERNAL_PARENT[childrenColumnName].forEach((c) => {
-        if (selectedKeys.has(getRowKey(c))) {
+        if (selectedKeys.has(getRowKey(c, rowKey))) {
           len += 1;
         }
-        if (indeterminateKeys.has(getRowKey(c))) {
+        if (indeterminateKeys.has(getRowKey(c, rowKey))) {
           indeterminateKeys.add(parentKey);
           flag = true;
         }
@@ -174,7 +174,7 @@ function updateParent(
       record.__INTERNAL_PARENT,
       selectedKeys,
       indeterminateKeys,
-      getRowKey,
+      rowKey,
       childrenColumnName
     );
   }
@@ -184,4 +184,9 @@ export function unique(arr) {
   return [...new Set(arr)];
 }
 
-
+export const getRowKey = (record, rowKey) => {
+  if (typeof rowKey === 'function') {
+    return rowKey(getOriginData(record));
+  }
+  return record[rowKey];
+};

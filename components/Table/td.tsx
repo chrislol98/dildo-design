@@ -1,4 +1,4 @@
-import { useComponent, getOriginData } from './shared';
+import { useComponent, getOriginData, getRowKey } from './shared';
 import { isObject } from '../shared';
 import * as React from 'react';
 import get from 'lodash/get';
@@ -7,8 +7,24 @@ function isInvalidRenderElement(element) {
 }
 
 const Td = (props) => {
-  const { components, column, record, trIndex } = props;
+  const {
+    components,
+    column,
+    record,
+    trIndex,
+    rowKey: _rowKey,
+    level,
+    haveTreeData,
+    recordHaveChildren,
+    renderExpandIcon,
+    indentSize,
+  } = props;
+  const rowKey = getRowKey(record, _rowKey);
   const { ComponentBodyCell, ComponentTd } = useComponent(components);
+  const hasInlineExpandIcon = haveTreeData && column.$$isFirstColumn;
+  const needRenderExpandIcon = hasInlineExpandIcon && recordHaveChildren;
+  let paddingLeft = hasInlineExpandIcon && level > 0 ? indentSize * level : 0;
+
   let tdProps: {
     rowSpan?: number;
     colSpan?: number;
@@ -24,17 +40,20 @@ const Td = (props) => {
   }
 
   function renderChildren() {
-    return renderElement || get(record, column.dataIndex);
+    if (tdProps.colSpan === 0 || tdProps.rowSpan === 0) {
+      return null;
+    }
+    return (
+      <ComponentTd {...tdProps}>
+        {paddingLeft ? <span className="indent" style={{ paddingLeft }} /> : null}
+        {needRenderExpandIcon ? renderExpandIcon(record, rowKey) : null}
+
+        <ComponentBodyCell>{renderElement || get(record, column.dataIndex)}</ComponentBodyCell>
+      </ComponentTd>
+    );
   }
 
-  if (tdProps.colSpan === 0 || tdProps.rowSpan === 0) {
-    return null;
-  }
-  return (
-    <ComponentTd {...tdProps}>
-      <ComponentBodyCell>{renderChildren()}</ComponentBodyCell>
-    </ComponentTd>
-  );
+  return renderChildren();
 };
 
 export default Td;

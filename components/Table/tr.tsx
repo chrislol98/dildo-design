@@ -1,28 +1,44 @@
-import { useComponent, INTERNAL_EXPAND_KEY, getOriginData, INTERNAL_SELECTION_KEY } from './shared';
+import {
+  useComponent,
+  INTERNAL_EXPAND_KEY,
+  getOriginData,
+  INTERNAL_SELECTION_KEY,
+  getRowKey,
+} from './shared';
 import * as React from 'react';
 import Td from './td';
-import { isSyntheticEvent } from '../shared';
+import { isSyntheticEvent, isArray } from '../shared';
 const Tr = (props, ref) => {
   const {
     columns,
     record,
     components,
-    rowKey,
+    rowKey: _rowKey,
     index,
-    isRowExpandable,
+    shouldRowExpand,
+    expandProps = {},
     expandedRowRender,
     selectedRowKeys,
     onCheck,
     rowSelection,
-    expandProps = {},
     onClickExpandBtn,
+    indeterminateKeys,
+    childrenColumnName,
+    data,
     expandedRowKeys = [],
   } = props;
+  const rowKey = getRowKey(record, _rowKey);
   const originRecord = getOriginData(record);
   const { ComponentBodyRow, ComponentTd, getBodyComponentOperations } = useComponent(components);
-
+  const tdProps = { ...props };
   // selection /////////////////////////////////////////
   const checked = selectedRowKeys.indexOf(rowKey) > -1;
+  const checkboxRef = React.useRef<HTMLInputElement | null>();
+  const indeterminate = indeterminateKeys.indexOf(rowKey) > -1;
+
+  React.useEffect(() => {
+    checkboxRef.current.indeterminate = indeterminate;
+  }, [indeterminate]);
   const handleOnCheck = (e) => {
     let checked;
     if (isSyntheticEvent(e)) {
@@ -31,17 +47,19 @@ const Tr = (props, ref) => {
     onCheck(checked, record);
   };
   function renderSelection() {
-    const checkboxNode = <input type="checkbox" checked={checked} onChange={handleOnCheck}></input>;
+    const checkboxNode = (
+      <input ref={checkboxRef} type="checkbox" checked={checked} onChange={handleOnCheck}></input>
+    );
     if (rowSelection?.renderCell) {
       const { renderCell } = rowSelection;
-      return <ComponentTd>{renderCell(checkboxNode, checked, originRecord)}</ComponentTd>;
+      return renderCell(checkboxNode, checked, originRecord);
     }
-    return checkboxNode;
+    return <ComponentTd>{checkboxNode}</ComponentTd>;
   }
   const selectionNode = renderSelection();
   // selection /////////////////////////////////////////
   // expand ////////////////////////////////////////////
-  const rowExpandable = isRowExpandable(record, index);
+  const rowExpandable = shouldRowExpand(record, index);
   const renderExpandIcon = (record, rowKey) => {
     // todo ~什么意思
     const expanded = !!~expandedRowKeys.indexOf(rowKey);
@@ -61,9 +79,21 @@ const Tr = (props, ref) => {
   const expandNode = expandedRowRender && (
     <ComponentTd>{rowExpandable && renderExpandIcon(record, rowKey)}</ComponentTd>
   );
-  // expand ////////////////////////////////////////////
   const bodyOperations = getBodyComponentOperations({ selectionNode, expandNode });
 
+  // expand ////////////////////////////////////////////
+  // tree data
+  function isChildrenNotEmpty(record) {
+    return expandProps.strictTreeData
+      ? isArray(record[childrenColumnName]) && record[childrenColumnName].length
+      : record[childrenColumnName] !== undefined;
+  }
+
+  function isDataHaveChildren() {
+    return data.find((d) => isChildrenNotEmpty(d));
+  }
+  const haveTreeData = isDataHaveChildren() && !expandedRowRender;
+  const recordHaveChildren = isChildrenNotEmpty(record);
   return (
     <ComponentBodyRow ref={ref}>
       {columns.map((col, idx) => {
@@ -78,13 +108,27 @@ const Tr = (props, ref) => {
 
           return React.cloneElement(node, {
             key: col.key,
+
             className: '',
             style: {
               width: col.width,
+              minWidth: col.width,
             },
           });
         }
-        return <Td key={idx} column={col} index={idx} record={record} trIndex={index}></Td>;
+        return (
+          <Td
+            {...tdProps}
+            key={idx}
+            column={col}
+            index={idx}
+            record={record}
+            trIndex={index}
+            haveTreeData={haveTreeData}
+            recordHaveChildren={recordHaveChildren}
+            renderExpandIcon={renderExpandIcon}
+          ></Td>
+        );
       })}
     </ComponentBodyRow>
   );

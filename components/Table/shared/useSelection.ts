@@ -5,22 +5,22 @@ import {
   getSelectedKeys,
   getSelectedKeysByData,
   unique,
+  getRowKey,
 } from '../shared';
 import { isArray } from '../../shared';
 
-export default function useSelection(props, pageData, data, getRowKey) {
-  const { rowSelection, childrenColumnName } = props;
-
-  const {
-    allSelectedRowKeys, // 所有的可以选择的行（除了disabled的）
-    flattenData,
-  } = getMetaFromData();
+export default function useSelection(props, pageData, data) {
+  const { rowSelection, childrenColumnName, rowKey } = props;
 
   const [selectedRowKeys, setSelectedRowKeys] = React.useState([]);
   const [indeterminateKeys, setIndeterminateKeys] = React.useState([]);
   const controlledSelectedRowKeys = rowSelection?.selectedRowKeys;
   const checkConnected =
     typeof rowSelection?.checkStrictly === 'boolean' ? !rowSelection.checkStrictly : false;
+  const {
+    allSelectedRowKeys, // 所有的可以选择的行（除了disabled的）
+    flattenData,
+  } = getMetaFromData();
   // 不懂 checkConnected(父子关联)/controlledSelectedRowKeys(受控)有关
   const keys = getSelectedKeysByData(
     flattenData,
@@ -29,10 +29,9 @@ export default function useSelection(props, pageData, data, getRowKey) {
     childrenColumnName,
     checkConnected
   );
-  const flattenKeys = new Set(flattenData.map((d) => getRowKey(d)));
+  const flattenKeys = new Set(flattenData.map((d) => getRowKey(d, rowKey)));
   const mergedSelectedRowKeys =
     checkConnected && !controlledSelectedRowKeys ? selectedRowKeys : keys.selectedRowKeys;
-  // 不懂 不知道干啥的
   const mergedIndeterminateKeys =
     checkConnected && !controlledSelectedRowKeys ? indeterminateKeys : keys.indeterminateKeys;
   const [selectedRows, setSelectedRows] = React.useState(getRowsFromKeys(mergedSelectedRowKeys));
@@ -42,7 +41,7 @@ export default function useSelection(props, pageData, data, getRowKey) {
     // selectedRows is placed before flattenData: https://github.com/arco-design/arco-design/issues/1294
     const all = plus ? selectedRows.concat(flattenData) : flattenData;
 
-    const keyMap = new Map(all.map((v) => [getRowKey(v), v]));
+    const keyMap = new Map(all.map((v) => [getRowKey(v, rowKey), v]));
     return keys.map((r) => keyMap.get(r)).filter((a) => a);
   }
   // 列表某项删除了，删除对应的key
@@ -78,7 +77,7 @@ export default function useSelection(props, pageData, data, getRowKey) {
       checked,
       mergedSelectedRowKeys,
       indeterminateKeys,
-      getRowKey,
+      rowKey,
       childrenColumnName,
       checkConnected
     );
@@ -99,13 +98,13 @@ export default function useSelection(props, pageData, data, getRowKey) {
     const travel = (children) => {
       if (isArray(children) && children.length) {
         children.forEach((record) => {
-          const rowKey = getRowKey(record);
+          const _rowKey = getRowKey(record, rowKey);
           const checkboxProps =
             rowSelection && typeof rowSelection.checkboxProps === 'function'
               ? rowSelection.checkboxProps(getOriginData(record))
               : {};
           if (!checkboxProps.disabled) {
-            allSelectedRowKeys.push(rowKey);
+            allSelectedRowKeys.push(_rowKey);
           }
           if (isChildrenNotEmpty(record, props.childrenColumnName)) {
             travel(record[props.childrenColumnName]);

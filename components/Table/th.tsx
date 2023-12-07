@@ -42,7 +42,6 @@ const Th = (props, ref) => {
   }
   // 不懂 todo 写到checkbox里面去
   React.useEffect(() => {
-    console.log('is exec');
     if (column.title === INTERNAL_SELECTION_KEY) {
       selectionRef.current.indeterminate =
         data &&
@@ -50,6 +49,7 @@ const Th = (props, ref) => {
         currentSelectedRowKeys.length !== allSelectedRowKeys.length;
     }
   }, [selectionRef, data, currentSelectedRowKeys, allSelectedRowKeys]);
+
   const expandNode = expandedRowRender && <th>{columnTitle && <div>{columnTitle}</div>}</th>;
   const selectionNode = rowSelection && (
     <ComponentTh>
@@ -83,8 +83,11 @@ const Th = (props, ref) => {
         if (column.title === INTERNAL_SELECTION_KEY) {
           node = headerOperations.find((o) => o.name === 'selectionNode')?.node;
         }
+        const _column = { ...column };
+        delete _column.$$isOperation;
+        delete _column.$$columnIndex;
         return React.cloneElement(node, {
-          ...column,
+          ..._column,
           key: column.key,
           className: '',
           style: {

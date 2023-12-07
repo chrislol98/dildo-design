@@ -5,110 +5,76 @@ const columns = [
   {
     title: 'Name',
     dataIndex: 'name',
-    render: (col, item, index) => {
-      const obj = {
-        children: col,
-        props: {},
-      };
-
-      // obj.props.colSpan = 4;
-
-      return obj;
-    },
-    // colSpan: 0,
-    sorter: (a, b) => {
-      if (a.name > b.name) {
-        return 1;
-      }
-      if (a.name < b.name) {
-        return -1;
-      }
-      return 0;
-    },
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    sorter: (a, b) => a.age - b.age,
-    filters: [
-      {
-        text: '> 15',
-        value: '15',
-      },
-      {
-        text: '> 18',
-        value: '18',
-      },
-    ],
-    // defaultFilters: ['18'],
-    // todo filterMultiple: false,
-    onFilter: (value, row) => row.age > value,
-  },
-  {
-    title: 'Score A',
-    children: [
-      {
-        title: 'Score B',
-        dataIndex: 'scoreB',
-
-        defaultSortOrder: 'descend',
-        sorter: {
-          compare: (a, b) => a.scoreB - b.scoreB,
-          multiple: 2,
-        },
-      },
-      {
-        title: 'Score C',
-        dataIndex: 'scoreC',
-        defaultSortOrder: 'descend',
-        sorter: {
-          compare: (a, b) => a.scoreC - b.scoreC,
-          multiple: 1,
-        },
-      },
-    ],
   },
 ];
 const data = [
   {
     key: '1',
-    name: 'A',
-    age: 18,
-
-    scoreB: 60,
-    scoreC: 70,
+    name: 'Jane Doe',
+    salary: 23000,
+    address: '32 Park Road, London',
+    email: 'jane.doe@example.com',
+    children: [
+      {
+        key: '1-1',
+        name: 'Christina',
+        address: '332 Park Road, London',
+        email: 'christina@example.com',
+      },
+    ],
   },
   {
     key: '2',
-    name: 'B',
-    age: 17,
-
-    scoreB: 90,
-    scoreC: 80,
+    name: 'Alisa Ross',
+    salary: 25000,
+    address: '35 Park Road, London',
+    email: 'alisa.ross@example.com',
+    children: [
+      {
+        key: '2-1',
+        name: 'Ed Hellen',
+        salary: 17000,
+        address: '42 Park Road, London',
+        email: 'ed.hellen@example.com',
+        children: [
+          {
+            key: '2-1-1',
+            name: 'Eric Miller',
+            salary: 23000,
+            address: '67 Park Road, London',
+            email: 'eric.miller@example.com',
+          },
+          {
+            key: '2-1-2',
+            name: 'Tom Jerry',
+            salary: 666,
+            address: '67 Park Road, London',
+            email: 'tom.jerry@example.com',
+          },
+        ],
+      },
+      {
+        key: '2-2',
+        name: 'William Smith',
+        salary: 27000,
+        address: '62 Park Road, London',
+        email: 'william.smith@example.com',
+      },
+      {
+        key: '2-3',
+        name: 'George Bush',
+        salary: 24000,
+        address: '62 Park Road, London',
+        email: 'george.bush@example.com',
+      },
+    ],
   },
   {
-    key: '3',
-    name: 'C',
-    age: 19,
-
-    scoreB: 70,
-    scoreC: 60,
-  },
-  {
-    key: '4',
-    name: 'D',
-    age: 15,
-
-    scoreB: 70,
-    scoreC: 100,
-  },
-  {
-    key: '5',
-    name: 'E',
-    age: 20,
-
-    scoreB: 70,
-    scoreC: 90,
+    key: '7',
+    name: 'Kevin Sandra',
+    salary: 22000,
+    address: '31 Park Road, London',
+    email: 'kevin.sandra@example.com',
   },
 ];
 const App = () => {
@@ -117,10 +83,12 @@ const App = () => {
       <Table
         columns={columns}
         data={data}
-        expandedRowRender={(record) => {
-          return `This is No.${record.key} description.`;
+        // expandedRowRender={(record) => {
+        //   return `This is No.${record.key} description.`;
+        // }}
+        rowSelection={{
+          checkStrictly: false,
         }}
-        rowSelection={{}}
       />
     </div>
   );
