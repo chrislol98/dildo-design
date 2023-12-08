@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useMergeProps } from '../shared';
 import { getAdjustPageSize, getBufferSize, getAllPages } from './shared';
-import Item, { stepPager } from './page-item';
+import { StepType } from './interface';
+import Pager, { JumpPager, StepPager } from './page-item';
 
 const defaultProps = {
   total: 0,
@@ -28,15 +29,24 @@ const Pagination = (_props, ref) => {
   const [pageSize, setPageSize] = React.useState(getAdjustPageSize(sizeOptions, defaultPageSize));
   const allPages = getAllPages(pageSize, total);
   const bufferSize = getBufferSize(props.bufferSize, allPages);
-  const pagerProps = {};
-  function renderItems() {
+  const onPageNumberChange = (pageNumber) => {
+    if (!('current' in props)) {
+      setCurrent(pageNumber);
+    }
+  };
+
+  const pagerProps = {
+    ...props,
+    onClick: onPageNumberChange,
+  };
+  function renderPagers() {
     const pageList = [];
     // 不懂 判断条件未看
     const beginFoldPage = 1 + 2 + bufferSize;
     const endFoldPage = allPages - 2 - bufferSize;
     if (allPages <= 4 + bufferSize * 2 || (current === beginFoldPage && current === endFoldPage)) {
       for (let i = 1; i <= allPages; i++) {
-        pageList.push(<Item key={i} pageNum={i}></Item>);
+        pageList.push(<Pager key={i} pageNum={i}></Pager>);
       }
     } else {
       let left = 1;
@@ -60,26 +70,36 @@ const Pagination = (_props, ref) => {
         right = allPages;
         left = Math.min(endFoldPage, current - bufferSize);
       }
-      const JumpPre = <div></div>;
-      const FirstPager = <div></div>;
+      const JumpPre = (
+        <JumpPager {...pagerProps} key={left - 1} jumpPage={-(bufferSize * 2 + 1)}></JumpPager>
+      );
+      const FirstPager = <Pager key={1} pageNum={1} {...pagerProps} />;
       if (hasJumpPre) {
         pageList.push(FirstPager);
         pageList.push(JumpPre);
       }
 
       for (let i = left; i <= right; i++) {
-        pageList.push(<Item key={i} pageNum={i} {...pagerProps} />);
+        pageList.push(<Pager key={i} pageNum={i} {...pagerProps} />);
       }
 
-      const JumpNext = <div></div>;
-      const LastPager = <div></div>;
+      const JumpNext = (
+        <JumpPager {...pagerProps} key={right + 1} jumpPage={bufferSize * 2 + 1}></JumpPager>
+      );
+      const LastPager = <Pager {...pagerProps} key={allPages} pageNum={allPages} />;
 
       if (hasJumpNext) {
         pageList.push(JumpNext);
         pageList.push(LastPager);
       }
 
-      return <ul>stepPager {pageList} StepPager</ul>;
+      return (
+        <ul>
+          <StepPager {...pagerProps} key="previous" type={StepType.previous} />
+          {pageList}
+          <StepPager key="next" {...pagerProps} type={StepType.next} />
+        </ul>
+      );
     }
   }
 
@@ -92,7 +112,7 @@ const Pagination = (_props, ref) => {
   return (
     <div>
       {renderTotalElement()}
-      {renderItems()}
+      {renderPagers()}
     </div>
   );
 };

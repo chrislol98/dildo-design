@@ -1,12 +1,23 @@
-export enum StepType {
-  previous,
-  next,
+import { StepType } from './interface';
+function Pager(props) {
+  const { pageNum, onClick: _onClick, disabled } = props;
+  const onClick = (e) => {
+    e.stopPropagation();
+    !disabled && onClick?.(pageNum);
+  };
+  return <li>{pageNum}</li>;
 }
-function Item(props) {
-  return <div></div>;
+export function JumpPager(props) {
+  const { onClick: _onClick, allPages, current, jumpPage, disabled } = props;
+  // 保证不超过allPages，也不小于minCurrent
+  const minCurrent = allPages > 0 ? 1 : 0;
+  const nextPage = Math.min(allPages, Math.max(minCurrent, current + jumpPage));
+  const onClick = () => {
+    !disabled && _onClick?.(nextPage);
+  };
+  return <li onClick={onClick}>...</li>;
 }
-
-function stepPager(props) {
+export function stepPager(props) {
   const { type, disabled, allPages, current } = props;
 
   function getMergedDisabled() {
@@ -38,5 +49,4 @@ function stepPager(props) {
 
   return <li onClick={onClick}>{StepIcon}</li>;
 }
-
-export default Item;
+export default Pager;
