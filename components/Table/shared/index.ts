@@ -5,11 +5,20 @@ export { default as useSorter } from './useSorter';
 export { default as useFilter } from './useFilter';
 export { default as useExpand } from './useExpand';
 export { default as useSelection } from './useSelection';
+export { default as usePagination } from './usePagination';
 export * from './constant';
 export function getSorterPriority(sorter) {
   if (typeof sorter === 'object' && typeof sorter.multiple === 'number') {
     return sorter.multiple;
   }
+}
+
+export function getPageData(data, options) {
+  const { current = 0, pageSize = 10, pagination } = options;
+  if (pagination === false) {
+    return data;
+  }
+  return data.slice((current - 1) * pageSize, current * pageSize);
 }
 
 export function getSorterFn(sorter) {

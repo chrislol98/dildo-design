@@ -1,11 +1,16 @@
 import { StepType } from './interface';
 function Pager(props) {
-  const { pageNum, onClick: _onClick, disabled } = props;
+  const { pageNum, onClick: _onClick, disabled, current } = props;
   const onClick = (e) => {
-    e.stopPropagation();
-    !disabled && onClick?.(pageNum);
+    // e.stopPropagation()
+    !disabled && _onClick?.(pageNum);
   };
-  return <li>{pageNum}</li>;
+  const isActive = current === pageNum;
+  return (
+    <li onClick={onClick} style={{ background: isActive ? 'green' : 'grey' }}>
+      {pageNum}
+    </li>
+  );
 }
 export function JumpPager(props) {
   const { onClick: _onClick, allPages, current, jumpPage, disabled } = props;
@@ -17,7 +22,7 @@ export function JumpPager(props) {
   };
   return <li onClick={onClick}>...</li>;
 }
-export function stepPager(props) {
+export function StepPager(props) {
   const { type, disabled, allPages, current } = props;
 
   function getMergedDisabled() {
@@ -43,6 +48,7 @@ export function stepPager(props) {
       return;
     }
     let nextPage = current + (type === StepType.previous ? -1 : 1);
+    // 保证不超过allPages，也不小于minCurrent
     nextPage = Math.max(0, Math.min(allPages, nextPage));
     props.onClick && props.onClick(nextPage);
   };

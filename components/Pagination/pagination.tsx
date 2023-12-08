@@ -29,24 +29,27 @@ const Pagination = (_props, ref) => {
   const [pageSize, setPageSize] = React.useState(getAdjustPageSize(sizeOptions, defaultPageSize));
   const allPages = getAllPages(pageSize, total);
   const bufferSize = getBufferSize(props.bufferSize, allPages);
-  const onPageNumberChange = (pageNumber) => {
-    if (!('current' in props)) {
-      setCurrent(pageNumber);
-    }
-  };
 
-  const pagerProps = {
-    ...props,
-    onClick: onPageNumberChange,
-  };
   function renderPagers() {
+    const onPageNumberChange = (pageNumber) => {
+      if (!('current' in props)) {
+        setCurrent(pageNumber);
+      }
+    };
+    const pagerProps = {
+      ...props,
+      current,
+      pageSize,
+      allPages,
+      bufferSize,
+      onClick: onPageNumberChange,
+    };
     const pageList = [];
-    // 不懂 判断条件未看
     const beginFoldPage = 1 + 2 + bufferSize;
     const endFoldPage = allPages - 2 - bufferSize;
     if (allPages <= 4 + bufferSize * 2 || (current === beginFoldPage && current === endFoldPage)) {
       for (let i = 1; i <= allPages; i++) {
-        pageList.push(<Pager key={i} pageNum={i}></Pager>);
+        pageList.push(<Pager {...pagerProps} key={i} pageNum={i}></Pager>);
       }
     } else {
       let left = 1;
@@ -54,7 +57,6 @@ const Pagination = (_props, ref) => {
       let hasJumpPre = true;
       let hasJumpNext = true;
 
-      // 不懂 未看
       // fold front and back
       if (current > beginFoldPage && current < endFoldPage) {
         right = current + bufferSize;
@@ -73,14 +75,14 @@ const Pagination = (_props, ref) => {
       const JumpPre = (
         <JumpPager {...pagerProps} key={left - 1} jumpPage={-(bufferSize * 2 + 1)}></JumpPager>
       );
-      const FirstPager = <Pager key={1} pageNum={1} {...pagerProps} />;
+      const FirstPager = <Pager {...pagerProps} key={1} pageNum={1} />;
       if (hasJumpPre) {
         pageList.push(FirstPager);
         pageList.push(JumpPre);
       }
 
       for (let i = left; i <= right; i++) {
-        pageList.push(<Pager key={i} pageNum={i} {...pagerProps} />);
+        pageList.push(<Pager {...pagerProps} key={i} pageNum={i} />);
       }
 
       const JumpNext = (
@@ -92,15 +94,21 @@ const Pagination = (_props, ref) => {
         pageList.push(JumpNext);
         pageList.push(LastPager);
       }
-
-      return (
-        <ul>
-          <StepPager {...pagerProps} key="previous" type={StepType.previous} />
-          {pageList}
-          <StepPager key="next" {...pagerProps} type={StepType.next} />
-        </ul>
-      );
     }
+    return (
+      <ul
+        style={{
+          margin: 0,
+          padding: 0,
+          listStyle: 'none',
+          display: 'flex',
+        }}
+      >
+        <StepPager {...pagerProps} key="previous" type={StepType.previous} />
+        {pageList}
+        <StepPager key="next" {...pagerProps} type={StepType.next} />
+      </ul>
+    );
   }
 
   function renderTotalElement() {

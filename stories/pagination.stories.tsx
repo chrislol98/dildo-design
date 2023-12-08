@@ -1,32 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Form } from '../components';
+import { Pagination } from '../components';
 import * as React from 'react';
 const App = () => {
-  // const [form] = Form.useForm();
-  const formRef = React.useRef();
-  return (
-    <Form
-      // form={form}
-      ref={formRef}
-      initialValues={{
-        xzc: 234,
-        zzw: 1111111111111,
-      }}
-      onChange={() => {
-        console.log('onchange');
-      }}
-      onSubmit={(values) => {
-        console.log(values);
-      }}
-    >
-      <Form.Item initialValue={123} field="xzc">
-        <input></input>
-      </Form.Item>
-      <Form.Item field="zzw">
-        <input type="submit"></input>
-      </Form.Item>
-    </Form>
-  );
+  return <Pagination total={3} />;
 };
 
 const meta: Meta<typeof App> = {
@@ -34,7 +10,7 @@ const meta: Meta<typeof App> = {
 };
 type Story = StoryObj<typeof App>;
 
-export const 表单: Story = {
+export const XzcPagination: Story = {
   render: () => <App />,
 };
 export default meta;
