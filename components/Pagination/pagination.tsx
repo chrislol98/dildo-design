@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMergeProps } from '../shared';
 import { getAdjustPageSize, getBufferSize, getAllPages } from './shared';
-import Item from './page-item';
+import Item, { stepPager } from './page-item';
 
 const defaultProps = {
   total: 0,
