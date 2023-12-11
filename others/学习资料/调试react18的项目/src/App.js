@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { CSSTransition } from 'react-transition-group';
+import './App.css';
 // React.memo
 // export default function App() {
 //   const [state, setState] = React.useState(0);
@@ -25,14 +27,19 @@ export default function App() {
   );
 }
 
-// const Child = React.memo((props) => {
-//   return <div>Child</div>;
-// });
-let Child = (props) => {
-  return <div>Child</div>;
-};
-Child.displayName = 'Child';
-
-Child = React.forwardRef(Child);
+const Child = React.memo((props) => {
+  const [show, setShow] = React.useState(true);
+  function toggleShow() {
+    setShow(!show);
+  }
+  return (
+    <div>
+      <CSSTransition in={show} timeout={1000} classNames="fade" unmountOnExit appear={true}>
+        <div>hello</div>
+      </CSSTransition>
+      <button onClick={toggleShow}>toggle</button>
+    </div>
+  );
+});
 
 console.log(Child, 'child');

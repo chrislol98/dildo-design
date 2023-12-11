@@ -23,8 +23,8 @@ const Popup = React.forwardRef<PopupRef, PopupProps>((_props, ref) => {
     delay,
     attach,
     triggerElement,
-    overlayClassName,
     zIndex,
+    overlayClassName,
     overlayInnerClassName,
     overlayStyle,
     overlayInnerStyle,
@@ -44,6 +44,14 @@ const Popup = React.forwardRef<PopupRef, PopupProps>((_props, ref) => {
       placement.replace(/-(left|top)$/, '-start').replace(/-(right|bottom)$/, '-end') as Placement,
     [placement]
   );
+
+  React.useImperativeHandle(ref, () => ({
+    getPopper: () => popperRef.current,
+    getPopupElement: () => popupRef.current,
+    getPortalElement: () => portalRef.current,
+    getPopupContentElement: () => contentRef.current,
+    setVisible: (visible: boolean) => onVisibleChange(visible, { trigger: 'document' }),
+  }));
 
   function renderTriggerNode() {
     const { getTriggerNode, getTriggerDom } = useTrigger({
@@ -82,29 +90,19 @@ const Popup = React.forwardRef<PopupRef, PopupProps>((_props, ref) => {
     function handleEnter() {
       !destroyOnClose && popupElement && (popupElement.style.display = 'block');
     }
-    const DEFAULT_TRANSITION_TIMEOUT = 180;
 
     return (
       showOverlay && (
         <CSSTransition
           appear
           in={visible}
-          timeout={DEFAULT_TRANSITION_TIMEOUT}
           nodeRef={portalRef}
           unmountOnExit={destroyOnClose}
           onEnter={handleEnter}
           onExited={handleExited}
         >
           <Portal triggerNode={getRefDom(triggerRef)} attach={attach} ref={portalRef}>
-            <CSSTransition
-              appear
-              timeout={0}
-              in={visible}
-              nodeRef={popupRef}
-              {...getTransitionParams({
-                classPrefix,
-              })}
-            >
+            <CSSTransition appear timeout={0} in={visible} nodeRef={popupRef}>
               <div
                 ref={(node) => {
                   if (node) {
