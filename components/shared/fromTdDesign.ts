@@ -2,8 +2,10 @@ import { useState, useMemo } from 'react';
 import upperFirst from 'lodash/upperFirst';
 export function useDefaultProps<T>(originalProps: T, defaultProps: Record<PropertyKey, any>): T {
   return useMemo<T>(() => {
+    // eslint-disable-next-line
     const props = Object.assign({}, originalProps);
     Object.keys(defaultProps).forEach((key) => {
+      // https://github.com/facebook/react/blob/main/packages/react/src/ReactElement.js#L328-L330
       if (props[key] === undefined) {
         props[key] = defaultProps[key];
       }
@@ -11,8 +13,6 @@ export function useDefaultProps<T>(originalProps: T, defaultProps: Record<Proper
     return props;
   }, [originalProps, defaultProps]);
 }
-
-
 
 export interface ChangeHandler<T, P extends any[]> {
   (value: T, ...args: P);
@@ -61,9 +61,6 @@ export const useControlled: <P extends any[], R extends object, K extends keyof 
     },
   ];
 };
-
-
-
 
 /** */
 function noop() {

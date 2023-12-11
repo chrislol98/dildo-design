@@ -1,44 +1,140 @@
 import * as React from 'react';
+import isFunction from 'lodash/isFunction';
+import { usePopper } from 'react-popper';
+import { CSSTransition } from 'react-transition-group';
+import { Placement } from '@popperjs/core';
+import { getTransitionParams } from './utils';
+import classNames from 'classnames';
 import { popupDefaultProps } from './defaultProps';
 import { useDefaultProps, useControlled } from '../shared';
 import { useTrigger, getRefDom } from './shared';
-import { usePopper } from 'react-popper';
-import { Placement } from '@popperjs/core';
-import { PopupRef, PopupProps } from './type';
+import Portal from '../Portal';
+import { PopupRef, PopupProps, TdPopupProps } from './type';
 
 const Popup = React.forwardRef<PopupRef, PopupProps>((_props, ref) => {
   const props = useDefaultProps<PopupProps>(_props, popupDefaultProps);
-  const {placement,popperOptions, content, disabled,trigger,delay} = props;
-  const [visible, onVisibleChange] = useControlled(props, 'visible', props.onVisibleChange);
-  const triggerRef = React.useRef(null);
-  const popperRef = React.useRef(null);
-  const [popupElement, setPopupElement] = React.useState(null);
-  const popperPlacement = React.useMemo(
-    () => placement.replace(/-(left|top)$/, '-start').replace(/-(right|bottom)$/, '-end') as Placement,
-    [placement],
-  );
-
-  const { getTriggerNode, getPopupProps, getTriggerDom } = useTrigger({
-    triggerRef,
+  const classPrefix = 'xzc';
+  const {
+    placement,
+    popperOptions,
     content,
     disabled,
     trigger,
-    visible,
     delay,
-    onVisibleChange,
-  });
-  // const triggerNode = isFunction(children)
-  //   ? getTriggerNode(children({ visible }))
-  //   : getTriggerNode(children);
-  popperRef.current = usePopper(getRefDom(triggerRef), popupElement, {
-    placement: popperPlacement,
-    ...popperOptions,
-  });
+    attach,
+    triggerElement,
+    overlayClassName,
+    zIndex,
+    overlayInnerClassName,
+    overlayStyle,
+    overlayInnerStyle,
+    hideEmptyPopup,
+    destroyOnClose,
+    children = triggerElement,
+  } = props;
+  const [visible, onVisibleChange] = useControlled(props, 'visible', props.onVisibleChange);
+  const popperRef = React.useRef(null);
+  const portalRef = React.useRef(null);
+  const contentRef = React.useRef(null);
+  const popupRef = React.useRef(null);
+  const triggerRef = React.useRef(null);
+  const [popupElement, setPopupElement] = React.useState(null);
+  const popperPlacement = React.useMemo(
+    () =>
+      placement.replace(/-(left|top)$/, '-start').replace(/-(right|bottom)$/, '-end') as Placement,
+    [placement]
+  );
+
+  function renderTriggerNode() {
+    const { getTriggerNode, getTriggerDom } = useTrigger({
+      triggerRef,
+      content,
+      disabled,
+      trigger,
+      visible,
+      delay,
+      onVisibleChange,
+    });
+    return isFunction(children)
+      ? getTriggerNode((children as unknown as Function)({ visible }))
+      : getTriggerNode(children);
+  }
+  function renderOverlay() {
+    // 整理浮层样式
+    function getOverlayStyle(overlayStyle: TdPopupProps['overlayStyle']) {
+      if (getRefDom(triggerRef) && popupRef.current && typeof overlayStyle === 'function') {
+        return { ...overlayStyle(getRefDom(triggerRef), popupRef.current) };
+      }
+      return { ...overlayStyle };
+    }
+    const showOverlay = React.useMemo(() => {
+      if (hideEmptyPopup && !content) return false;
+      return visible || popupElement;
+    }, [hideEmptyPopup, content, visible, popupElement]);
+    popperRef.current = usePopper(getRefDom(triggerRef), popupElement, {
+      placement: popperPlacement,
+      ...popperOptions,
+    });
+    const { styles, attributes } = popperRef.current;
+    function handleExited() {
+      !destroyOnClose && popupElement && (popupElement.style.display = 'none');
+    }
+    function handleEnter() {
+      !destroyOnClose && popupElement && (popupElement.style.display = 'block');
+    }
+    const DEFAULT_TRANSITION_TIMEOUT = 180;
+
+    return (
+      showOverlay && (
+        <CSSTransition
+          appear
+          in={visible}
+          timeout={DEFAULT_TRANSITION_TIMEOUT}
+          nodeRef={portalRef}
+          unmountOnExit={destroyOnClose}
+          onEnter={handleEnter}
+          onExited={handleExited}
+        >
+          <Portal triggerNode={getRefDom(triggerRef)} attach={attach} ref={portalRef}>
+            <CSSTransition
+              appear
+              timeout={0}
+              in={visible}
+              nodeRef={popupRef}
+              {...getTransitionParams({
+                classPrefix,
+              })}
+            >
+              <div
+                ref={(node) => {
+                  if (node) {
+                    popupRef.current = node;
+                    setPopupElement(node);
+                  }
+                }}
+                style={{ ...styles.popper, zIndex, ...getOverlayStyle(overlayStyle) }}
+                className={classNames(`${classPrefix}-popup`, overlayClassName)}
+                {...attributes.popper}
+              >
+                <div
+                  ref={contentRef}
+                  className={classNames(`${classPrefix}-popup__content`, overlayInnerClassName)}
+                  style={getOverlayStyle(overlayInnerStyle)}
+                >
+                  {content}
+                </div>
+              </div>
+            </CSSTransition>
+          </Portal>
+        </CSSTransition>
+      )
+    );
+  }
 
   return (
     <React.Fragment>
-      {/*{triggerNode}*/}
-      {/*{overlay}*/}
+      {renderTriggerNode()}
+      {renderOverlay()}
     </React.Fragment>
   );
 });

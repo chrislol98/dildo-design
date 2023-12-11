@@ -28,9 +28,11 @@ export default function App() {
 // const Child = React.memo((props) => {
 //   return <div>Child</div>;
 // });
-const Child = (props) => {
+let Child = (props) => {
   return <div>Child</div>;
 };
 Child.displayName = 'Child';
 
-console.log(React.createElement('div', {}));
+Child = React.forwardRef(Child);
+
+console.log(Child, 'child');

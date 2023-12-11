@@ -42,6 +42,7 @@
     "dayjs": "^1.11.10",
     "lodash": "^4.17.21",
     "react-is": "^18.2.0",
-    "react-popper": "^2.3.0"
+    "react-popper": "^2.3.0",
+    "react-transition-group": "^4.4.5"
   }
 }

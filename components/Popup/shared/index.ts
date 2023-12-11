@@ -10,14 +10,12 @@ export function getRefDom(domRef: React.RefObject<any>) {
   return domRef.current;
 }
 
-
-
 // 判断是否支持 ref 透传
 export function supportRef(nodeOrComponent: any): boolean {
   const type = isMemo(nodeOrComponent) ? nodeOrComponent.type.type : nodeOrComponent.type;
 
   // Function component node
-  if (typeof type === 'function' && !type.prototype?.render) {
+  if (typeof type === 'function' && !type?.render) {
     return false;
   }
 
@@ -30,7 +28,7 @@ export function supportRef(nodeOrComponent: any): boolean {
 }
 
 // 同时处理多个 ref
-export  function composeRefs<T>(...refs: Ref<T>[]) {
+export function composeRefs<T>(...refs: Ref<T>[]) {
   return (instance: T) => {
     // eslint-disable-next-line no-restricted-syntax
     for (const ref of refs) {

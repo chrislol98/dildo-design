@@ -4,11 +4,13 @@
     "module": "ESNext",
     "target": "ES6",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
     "resolveJsonModule": true,
     "noImplicitAny": false,
     "lib": ["esnext", "dom"],
     "allowJs": true,
+    "checkJs": true,
     "baseUrl": "./",
     "paths": {
       "@arco-design/web-react": ["components/index.tsx"],
