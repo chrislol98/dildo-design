@@ -11,7 +11,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/core": "^7.23.6",
     "commander": "^11.1.0",
-    "node-typescript-compiler": "^4.0.0"
+    "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-if": "^3.0.0",
+    "gulp-less": "^5.0.0",
+    "less-plugin-autoprefix": "^2.0.0",
+    "less-plugin-npm-import": "^2.1.0",
+    "node-typescript-compiler": "^4.0.0",
+    "through2": "^4.0.2"
   }
 }
