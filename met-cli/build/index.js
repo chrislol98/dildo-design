@@ -1,7 +1,6 @@
-
-import component from "./component"
-import css from './css'
+const component = require('./component');
+const css = require('./css');
 module.exports = {
   component,
-  css
+  css,
 };

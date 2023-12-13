@@ -1,7 +1,8 @@
-import less from 'gulp-less';
-import LessAutoprefix from 'less-plugin-autoprefix';
-import NpmImportPlugin from 'less-plugin-npm-import';
-import {
+const less = require('gulp-less');
+const LessAutoprefix = require('less-plugin-autoprefix');
+const NpmImportPlugin = require('less-plugin-npm-import');
+
+const {
   DIR_NAME_ASSET,
   DIR_NAME_CJS,
   DIR_NAME_COMPONENT_LIBRARY,
@@ -10,14 +11,18 @@ import {
   DIR_NAME_UMD,
   FILENAME_DIST_CSS,
   FILENAME_DIST_LESS,
-} from '../env';
+} = require('../env');
 
 const npmImport = new NpmImportPlugin({ prefix: '~' });
 const autoprefix = new LessAutoprefix();
 const FILE_ASSET_EXT = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'ttf', 'eot', 'woff', 'woff2'];
 const FILE_WATCHED_EXT = FILE_ASSET_EXT.concat(['less', 'css']);
 const config = {
-  hook: {},
+  jsEntry: {
+    entry: [`${DIR_NAME_SOURCE}/style/index.ts`, `${DIR_NAME_COMPONENT_LIBRARY}/*/style/index.ts`],
+    autoInjectArcoDep: true,
+    styleSheetExtension: 'less',
+  },
   css: {
     entry: [`${DIR_NAME_SOURCE}/**/index.less`, `${DIR_NAME_COMPONENT_LIBRARY}/**/index.less`],
     watch: [
@@ -43,4 +48,4 @@ const config = {
     },
   },
 };
-export default config;
+module.exports = config;

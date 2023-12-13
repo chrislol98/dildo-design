@@ -1,8 +1,15 @@
 const tsc = require('node-typescript-compiler');
-const { PROCESS_ENV_BUILD_ES, PROCESS_ENV_BUILD_CJS, PROCESS_ENV_BUILD_BABEL } = require('../env');
+const {
+  PROCESS_ENV_BUILD_ES,
+  PROCESS_ENV_BUILD_CJS,
+  PROCESS_ENV_BUILD_BABEL,
+  CWD,
+} = require('../env');
 const { transform } = require('@babel/core');
+const path = require('path');
+const fs = require('fs-extra');
 
- const component = () => {
+const component = () => {
   if (PROCESS_ENV_BUILD_BABEL) {
     withBabel();
   } else {
@@ -26,11 +33,11 @@ const withBabel = () => {
 };
 
 const getTsConfig = () => {
-  const tsConfigPath = path.resolve(process.CWD(), 'tsconfig.json');
+  const tsConfigPath = path.resolve(CWD, 'tsconfig.json');
   let tsConfig = {};
   if (fs.pathExistsSync(tsConfigPath)) {
     tsConfig = require(tsConfigPath);
   }
   return tsConfig;
 };
-export default component;
+module.exports = component;

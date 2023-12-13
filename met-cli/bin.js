@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const { version } = require('./package.json');
-const program = require('commander');
+const { program } = require('commander');
 const build = require('./build');
 program.version(version).name('met-cli');
 

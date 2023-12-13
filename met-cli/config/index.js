@@ -1,1 +1,4 @@
-export { default as styleConfig } from './styleConfig';
+const styleConfig = require('./styleConfig');
+module.exports = {
+  styleConfig,
+};

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "allowJs": true, // tsconfig.json中要写
+    "outDir": "./**",
+    "target": "es5",
+    "checkJs": true, // 这个是主要的
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "include": ["**/*"],
+  "exclude": []
+}
