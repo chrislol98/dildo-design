@@ -2,20 +2,42 @@
   "name": "met-design",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "module": "./es/index.js",
+  "main": "./lib/index.js",
+  "unpkg": "./dist/arco.min.js",
+  "types": "./es/index.d.ts",
   "scripts": {
     "demo": "storybook dev -p 7007",
     "build-storybook": "storybook build",
     "icon": "cd icon && rimraf react-icon/ && rimraf react-icon-cjs && cd build/ && node generate.js",
+    "eslint": "eslint tests/ components/ --fix --cache --quiet --ext .js,.jsx,.ts,.tsx",
+    "stylelint": "stylelint \"{components,site}/**/*.less\"",
     "prepare": "husky install"
   },
   "keywords": [],
   "author": "chrislol",
   "license": "MIT",
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": "biome format --write",
-    "*.{json,less,md}": "prettier --ignore-unknown --write"
+    "src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "npm run eslint",
+      "npm run stylelint"
+    ]
   },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "peerDependencies": {
+    "react": ">=16",
+    "react-dom": ">=16"
+  },
+  "files": [
+    "dist",
+    "es",
+    "lib"
+  ],
   "devDependencies": {
     "@babel/core": "^7.23.2",
     "@babel/preset-env": "^7.22.20",
@@ -33,15 +55,17 @@
     "@storybook/testing-library": "^0.2.1",
     "@types/react": "^18.2.23",
     "@types/react-dom": "^18.2.7",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.55.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
-    "lodash": "^4.17.21",
     "nunjucks": "^3.2.4",
-    "prettier-plugin-organize-imports": "^3.2.3",
-    "prop-types": "^15.8.1",
+    "prettier": "^3.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.4.5",
+    "stylelint": "^16.0.2",
     "svgo": "^3.0.2"
   },
   "dependencies": {
