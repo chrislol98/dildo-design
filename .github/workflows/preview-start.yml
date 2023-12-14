@@ -1,0 +1,17 @@
+# 在 pull request 里面提交评论
+name: Preview Start
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  start-preview-info:
+    permissions:
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: update status comment
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: Prepare preview

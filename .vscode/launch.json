@@ -7,7 +7,7 @@
     {
       "type": "chrome",
       "request": "launch",
-      "name": "Launch Chrome against localhost",
+      "name": "调试一下",
       "url": "http://localhost:7007",
       "webRoot": "${workspaceFolder}"
     }

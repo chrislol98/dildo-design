@@ -1,2 +1,4 @@
-# met stands for exposed therapy mvc
-just export same api, do not care how different implement is
+code conduct:
+
+1. code structure must be clear
+2. export the same api
