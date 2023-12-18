@@ -3,13 +3,7 @@ import fse from 'fs-extra';
 import moment from 'moment';
 import axios from 'axios';
 import inquirer from 'inquirer';
-import {
-  getLastVersion,
-  compareVersion,
-  getBetaVersions,
-  getRecords,
-  isValidComponent,
-} from './shared';
+import { getLastVersion, compareVersion, getRecords, isValidComponent } from './shared';
 
 const nunjucksEnv = configure(__dirname, {
   autoescape: false,
