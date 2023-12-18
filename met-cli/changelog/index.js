@@ -57,7 +57,6 @@ const changelog = async () => {
   const currentContent = fse.readFileSync(CHANGELOG_DIR, 'utf8');
   const lastVersion = getLastVersion(currentContent);
 
-  let needMerge = false;
   if (version === lastVersion || compareVersion(version, lastVersion) < 1) {
     const answer = await inquirer.prompt({
       type: 'input',
@@ -70,36 +69,15 @@ const changelog = async () => {
     version = answer.version;
   }
 
-  if (/beta/.test(lastVersion)) {
-    const answer = await inquirer.prompt({
-      type: 'confirm',
-      name: 'merge',
-      message: `This last version is a beta, is need to merge?`,
-    });
-    needMerge = answer.merge;
-  }
-
-  await getList({ needMerge, currentContent, version });
+  await getList({ version });
 };
 
-async function getList({ needMerge, currentContent, version }) {
-  // 不懂 这个链接的意思
+async function getList({ version }) {
   const res = await axios.get(
     `https://api.github.com/search/issues?accept=application/vnd.github.v3+json&q=repo:arco-design/arco-design+is:pr+is:merged+milestone:${version}`
   );
 
   let data = res?.data?.items;
-
-  // 不懂 未看
-  // if (needMerge) {
-  //   const betaVersions = getBetaVersions(currentContent);
-
-  //   console.log(
-  //     `there are ${betaVersions.length} version need to merge: ${betaVersions.join(',')}`
-  //   );
-
-  //   const files = new Set(['site/docs/version_v2.zh-CN.md', 'site/docs/version_v2.en-US.md']);
-  // }
 
   const changelog = {
     version,
@@ -131,7 +109,6 @@ const appendChangelog = (emit) => {
     fse.accessSync(filename);
     const origin = fse.readFileSync(filename, 'utf8');
     let originContent = origin;
-    // 不懂 hasFM
     let hasFm = false;
     if (origin.match(/^---\nchangelog:\s*true\n---\n\n/)) {
       hasFm = true;
