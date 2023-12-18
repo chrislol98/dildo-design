@@ -10,9 +10,9 @@
     "demo": "storybook dev -p 7007",
     "build-storybook": "storybook build",
     "icon": "cd icon && rimraf react-icon/ && rimraf react-icon-cjs && cd build/ && node generate.js",
+    "prepare": "husky install",
     "eslint": "eslint tests/ components/ --fix --cache --quiet --ext .js,.jsx,.ts,.tsx",
-    "stylelint": "stylelint \"{components,site}/**/*.less\"",
-    "prepare": "husky install"
+    "stylelint": "stylelint \"{components,site}/**/*.less\""
   },
   "keywords": [],
   "author": "chrislol",
@@ -28,10 +28,6 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
-  },
-  "peerDependencies": {
-    "react": ">=16",
-    "react-dom": ">=16"
   },
   "files": [
     "dist",
@@ -55,7 +51,6 @@
     "@storybook/testing-library": "^0.2.1",
     "@types/react": "^18.2.23",
     "@types/react-dom": "^18.2.7",
-    "axios": "^1.6.2",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.55.0",
@@ -65,6 +60,8 @@
     "moment": "^2.29.4",
     "nunjucks": "^3.2.4",
     "prettier": "^3.1.1",
+    "prettier-plugin-organize-imports": "^3.2.3",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.4.5",
