@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "release": "node scripts/release.js",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "lint": "eslint --cache --ext .ts packages/*/{src,__tests__}/**.ts",
+    "format-check": "prettier --check --cache \"**/*.[tj]s?(x)\"",
+    "format": "prettier --write --cache \"**/*.[tj]s?(x)\"",
+
+    // 钩子
+    "preinstall": "npx only-allow pnpm",
+    "postinstall": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged",
+    "commit-msg": "xxx"
+  },
+  "lint-staged": {
+    "*.{js,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "eslint",
+      "prettier --parser=typescript --write"
+    ]
+  }
+}
