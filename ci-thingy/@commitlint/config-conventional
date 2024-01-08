@@ -1,0 +1,17 @@
+'build',
+'ci',
+'docs',
+'perf',
+'style',
+'test'
+
+'feat',
+'fix',
+'refactor',
+
+'revert',
+
+
+
+'chore' // 不在上面类型的全部用chore
+

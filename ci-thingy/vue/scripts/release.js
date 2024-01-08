@@ -145,6 +145,16 @@ async function main() {
     await publishPackage(pkg, targetVersion);
   }
 
+  if (!skipGit) {
+    const { stdout } = await run('git', ['diff'], { stdio: 'pipe' });
+    if (stdout) {
+      await runIfNotDry('git', ['add', '-A']);
+      await runIfNotDry('git', ['commit', '-m', `release: v${targetVersion}`]);
+    } else {
+      console.log('No changes to commit.');
+    }
+  }
+
   // push to GitHub
   if (!skipGit) {
     await runIfNotDry('git', ['tag', `v${targetVersion}`]);
